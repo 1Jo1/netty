@@ -129,7 +129,7 @@ public class GlobalEventExecutorTest {
         assertThat(afterTask.ran.get(), is(true));
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = 30000)
     public void testTakeTaskAlwaysHasTask() throws Exception {
         //for https://github.com/netty/netty/issues/1614
         //add scheduled task

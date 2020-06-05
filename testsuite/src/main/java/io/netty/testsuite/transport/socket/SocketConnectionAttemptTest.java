@@ -32,6 +32,8 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
 
+import javax.sound.sampled.SourceDataLine;
+
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
@@ -43,7 +45,7 @@ public class SocketConnectionAttemptTest extends AbstractClientSocketTest {
     // See /etc/services
     private static final int UNASSIGNED_PORT = 4;
 
-    @Test(timeout = 30000)
+    @Test(timeout = 40000)
     public void testConnectTimeout() throws Throwable {
         run();
     }
@@ -58,7 +60,7 @@ public class SocketConnectionAttemptTest extends AbstractClientSocketTest {
         }
     }
 
-    @Test(timeout = 30000)
+    @Test(timeout = 40000)
     public void testConnectRefused() throws Throwable {
         run();
     }
@@ -67,7 +69,7 @@ public class SocketConnectionAttemptTest extends AbstractClientSocketTest {
         testConnectRefused0(cb, false);
     }
 
-    @Test(timeout = 30000)
+    @Test(timeout = 40000)
     public void testConnectRefusedHalfClosure() throws Throwable {
         run();
     }
@@ -105,6 +107,8 @@ public class SocketConnectionAttemptTest extends AbstractClientSocketTest {
             // is thrown for no route to host when using Socket connect
         } catch (Exception e) {
             // ignore
+            System.out.println("} catch (Exception e) {!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            System.out.println(e);
         } finally {
             try {
                 socket.close();
@@ -120,10 +124,10 @@ public class SocketConnectionAttemptTest extends AbstractClientSocketTest {
     }
 
     public void testConnectCancellation(Bootstrap cb) throws Throwable {
-        cb.handler(new TestHandler()).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 4000);
+        cb.handler(new TestHandler()).option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 16000);
         ChannelFuture future = cb.connect(BAD_HOST, BAD_PORT);
         try {
-            if (future.await(1000)) {
+            if (future.await(2000)) {
                 if (future.isSuccess()) {
                     fail("A connection attempt to " + BAD_HOST + " must not succeed.");
                 } else {

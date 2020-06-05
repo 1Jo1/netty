@@ -227,7 +227,7 @@ public class SingleThreadEventExecutorTest {
         // Ensure event loop is started
         LatchTask latch0 = new LatchTask();
         executor.execute(latch0);
-        assertTrue(latch0.await(100, TimeUnit.MILLISECONDS));
+        assertTrue(latch0.await(200, TimeUnit.MILLISECONDS));
         // Pause to ensure it enters waiting state
         Thread.sleep(100L);
 
@@ -239,15 +239,15 @@ public class SingleThreadEventExecutorTest {
         executor.execute(latch2);
 
         // Neither should run yet
-        assertFalse(latch1.await(100, TimeUnit.MILLISECONDS));
-        assertFalse(latch2.await(100, TimeUnit.MILLISECONDS));
+        assertFalse(latch1.await(200, TimeUnit.MILLISECONDS));
+        assertFalse(latch2.await(200, TimeUnit.MILLISECONDS));
 
         // Submit regular task via regular execute
         LatchTask latch3 = new LatchTask();
         executor.execute(latch3);
 
         // Should flush latch1 and latch2 and then run latch3 immediately
-        assertTrue(latch3.await(100, TimeUnit.MILLISECONDS));
+        assertTrue(latch3.await(200, TimeUnit.MILLISECONDS));
         assertEquals(0, latch1.getCount());
         assertEquals(0, latch2.getCount());
     }
@@ -355,7 +355,7 @@ public class SingleThreadEventExecutorTest {
         assertThat(afterTask.ran.get(), is(true));
     }
 
-    @Test(timeout = 5000)
+    @Test(timeout = 20000)
     public void testTakeTaskAlwaysHasTask() throws Exception {
         //for https://github.com/netty/netty/issues/1614
 
