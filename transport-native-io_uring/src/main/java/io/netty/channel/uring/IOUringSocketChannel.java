@@ -32,8 +32,8 @@ import java.net.SocketAddress;
 
 public class IOUringSocketChannel extends AbstractIOUringChannel implements SocketChannel {
 
-    IOUringSocketChannel(final Channel parent, final LinuxSocket fd, final boolean active, final long ioUring) {
-        super(parent, fd, active, ioUring);
+    IOUringSocketChannel(final Channel parent, final LinuxSocket fd, final IOUringSubmissionQueue submissionQueue) {
+        super(parent, fd, submissionQueue);
     }
 
     @Override

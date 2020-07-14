@@ -55,11 +55,11 @@ public class IOUringCompletionQueue {
     this.ringFd = ringFd;
   }
 
-  private IOUringCqe peek() {
+  public IOUringCqe peek() {
     long cqe = 0;
     long head = toUnsignedLong(PlatformDependent.getInt(kHeadAddress));
 
-    //aquire memory barrier https://openjdk.java.net/jeps/171
+    //acquire memory barrier https://openjdk.java.net/jeps/171
     PlatformDependent.loadFence();
     if (head != toUnsignedLong(PlatformDependent.getInt(kTailAddress))) {
         long index = head & toUnsignedLong(PlatformDependent.getInt(kringMaskAddress));

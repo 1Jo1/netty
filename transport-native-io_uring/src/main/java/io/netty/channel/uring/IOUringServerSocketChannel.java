@@ -22,8 +22,10 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 public class IOUringServerSocketChannel extends AbstractIOUringServerChannel implements ServerSocketChannel {
-    IOUringServerSocketChannel(Channel parent, LinuxSocket fd, boolean active, long ioUring) {
-        super(parent, fd, active, ioUring);
+    private final IOUringSubmissionQueue submissionQueue;
+    IOUringServerSocketChannel(Channel parent, LinuxSocket fd, final IOUringSubmissionQueue ioUringSubmissionQueue) {
+        super(parent, fd, ioUringSubmissionQueue);
+        this.submissionQueue = ioUringSubmissionQueue;
     }
 
     @Override
@@ -39,6 +41,11 @@ public class IOUringServerSocketChannel extends AbstractIOUringServerChannel imp
     @Override
     public ServerSocketChannelConfig config() {
         return null;
+    }
+
+    @Override
+    Channel newChildChannel(int fd, IOUringSubmissionQueue submissionQueue) throws Exception {
+        return new IOUringSocketChannel(this, new LinuxSocket(fd), submissionQueue);
     }
 
     @Override
