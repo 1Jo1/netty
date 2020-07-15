@@ -27,16 +27,13 @@ import java.net.SocketAddress;
 public abstract class AbstractIOUringServerChannel extends AbstractIOUringChannel implements ServerChannel {
 
     private volatile SocketAddress local;
-    private IOUringSubmissionQueue submissionQueue;
 
-   AbstractIOUringServerChannel(int fd,
-                                 IOUringSubmissionQueue submissionQueue) {
-        super(null, new LinuxSocket(fd), submissionQueue);
+   AbstractIOUringServerChannel(int fd) {
+        super(null, new LinuxSocket(fd));
     }
 
-    AbstractIOUringServerChannel(LinuxSocket fd,
-                                 IOUringSubmissionQueue submissionQueue) {
-        super(null, fd, submissionQueue);
+    AbstractIOUringServerChannel(LinuxSocket fd) {
+        super(null, fd);
     }
 
     @Override
@@ -82,6 +79,7 @@ public abstract class AbstractIOUringServerChannel extends AbstractIOUringChanne
         @Override
         public void uringEventExecution() {
             final IOUringEventLoop ioUringEventLoop = (IOUringEventLoop) eventLoop();
+            IOUringSubmissionQueue submissionQueue = ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue();
 
             long eventId = ioUringEventLoop.incrementEventIdCounter();
             final Event event = new Event();

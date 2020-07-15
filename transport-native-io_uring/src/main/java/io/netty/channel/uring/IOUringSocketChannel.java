@@ -33,8 +33,8 @@ import java.net.SocketAddress;
 public class IOUringSocketChannel extends AbstractIOUringChannel implements SocketChannel {
     private final IOUringSocketChannelConfig config;
 
-    IOUringSocketChannel(final Channel parent, final LinuxSocket fd, final IOUringSubmissionQueue submissionQueue) {
-        super(parent, fd, submissionQueue);
+    IOUringSocketChannel(final Channel parent, final LinuxSocket fd) {
+        super(parent, fd);
         this.config = new IOUringSocketChannelConfig(this);
     }
 

@@ -42,14 +42,11 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
     final LinuxSocket socket;
     protected volatile boolean active;
     boolean uringInReadyPending;
-    private final IOUringSubmissionQueue submissionQueue;
 
-    AbstractIOUringChannel(final Channel parent, LinuxSocket fd,
-                           final IOUringSubmissionQueue submissionQueue) {
+    AbstractIOUringChannel(final Channel parent, LinuxSocket fd) {
         super(parent);
         this.socket = checkNotNull(fd, "fd");
         this.active = true;
-        this.submissionQueue = submissionQueue;
     }
 
     public boolean isOpen() {
@@ -76,6 +73,8 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
 
     public void doReadBytes(ByteBuf byteBuf) {
         IOUringEventLoop ioUringEventLoop = (IOUringEventLoop) eventLoop();
+        IOUringSubmissionQueue submissionQueue = ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue();
+
         unsafe().recvBufAllocHandle().attemptedBytesRead(byteBuf.writableBytes());
 
         if (byteBuf.hasMemoryAddress()) {
@@ -154,6 +153,7 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
     protected final void doWriteBytes(ByteBuf buf) throws Exception {
         if (buf.hasMemoryAddress()) {
             IOUringEventLoop ioUringEventLoop = (IOUringEventLoop) eventLoop();
+            IOUringSubmissionQueue submissionQueue = ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue();
             final Event event = new Event();
             long eventId = ioUringEventLoop.incrementEventIdCounter();
             event.setId(eventId);

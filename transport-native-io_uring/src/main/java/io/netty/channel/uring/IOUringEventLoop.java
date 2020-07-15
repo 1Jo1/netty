@@ -29,8 +29,6 @@ import static io.netty.channel.unix.Errors.*;
 
 class IOUringEventLoop extends SingleThreadEventLoop {
 
-    private final IntObjectMap<AbstractIOUringChannel> channels = new IntObjectHashMap<AbstractIOUringChannel>(4096);
-
     // events should be unique to identify which event type that was
     private long eventIdCounter;
     private final LongObjectHashMap<Event> events = new LongObjectHashMap<Event>();
@@ -38,8 +36,6 @@ class IOUringEventLoop extends SingleThreadEventLoop {
 
     protected IOUringEventLoop(final EventLoopGroup parent, final Executor executor, final boolean addTaskWakesUp) {
         super(parent, executor, addTaskWakesUp);
-
-        this.ringBuffer = RingBuffer.ringBuffer;
     }
 
     public long incrementEventIdCounter() {
@@ -124,5 +120,9 @@ class IOUringEventLoop extends SingleThreadEventLoop {
                 runAllTasks();
             }
         }
+    }
+
+    public RingBuffer getRingBuffer() {
+        return ringBuffer;
     }
 }

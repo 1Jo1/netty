@@ -26,7 +26,7 @@ public class IOUringServerSocketChannel extends AbstractIOUringServerChannel imp
     private final IOUringServerSocketChannelConfig config;
 
     public IOUringServerSocketChannel() {
-        super(Socket.newSocketStream().getFd(), RingBuffer.ringBuffer.getIoUringSubmissionQueue());
+        super(Socket.newSocketStream().getFd());
         this.config = new IOUringServerSocketChannelConfig(this);
     }
 
@@ -49,7 +49,7 @@ public class IOUringServerSocketChannel extends AbstractIOUringServerChannel imp
 
     @Override
     Channel newChildChannel(int fd, IOUringSubmissionQueue submissionQueue) throws Exception {
-        return new IOUringSocketChannel(this, new LinuxSocket(fd), submissionQueue);
+        return new IOUringSocketChannel(this, new LinuxSocket(fd));
     }
 
     @Override
