@@ -36,6 +36,7 @@ class IOUringEventLoop extends SingleThreadEventLoop {
 
     protected IOUringEventLoop(final EventLoopGroup parent, final Executor executor, final boolean addTaskWakesUp) {
         super(parent, executor, addTaskWakesUp);
+        ringBuffer = Native.createRingBuffer(32);
     }
 
     public long incrementEventIdCounter() {
