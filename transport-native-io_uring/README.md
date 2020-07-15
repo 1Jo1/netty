@@ -29,7 +29,7 @@ PlatformDependent.putLong(sqe + SQE_USER_DATA_FIELD, eventId);
 ```
 sqe is a C struct pointer(https://github.com/axboe/liburing/blob/master/src/include/liburing/io_uring.h#L21) and these offsets SQE_OP_CODE_FIELD which points to a specifc property,
 let's say I have other cpu architecture or an 32 Bit system and C compiler doesn't not gurantee that int size is 4 bytes it could be also 2 bytes, my offset calculation is only 64 bit system right now that would means that third parties may access other client data or manipulate data or execute code.
-or my offset caluclation is wrong that would cause security vulnerability as well. Another security vulnerability would be JNI part which just to create these two Ring Buffers which are mmaped with the kernel
+or my offset caluclation is wrong that would cause security vulnerability as well. Another security vulnerability would be JNI-C part which just to create these two Ring Buffers which are mmaped with the kernel
 
 what I need to do to prevent the security vulnerability thoroughly many tests like test each unsafe execution, or  test each sqe property, 
 probably, we won't support 32 Bit so I have to make sure that you can't execute it. 
