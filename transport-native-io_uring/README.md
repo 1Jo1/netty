@@ -33,5 +33,8 @@ or my offset caluclation is wrong that would cause security vulnerability as wel
 
 what I need to do to prevent the security vulnerability thoroughly many tests like test each unsafe execution, or  test each sqe property, 
 probably, we won't support 32 Bit so I have to make sure that you can't execute it. 
+Another way would be to find security vulnerability is to use different attack vectors or use a tool for that
 
-another way would be to find security vulnerability is to use different attack vectors or use a tool for that
+
+### Contributions
+the project is completely done by me alone but I get a feedback from netty community
