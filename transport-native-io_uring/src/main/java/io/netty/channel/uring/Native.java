@@ -33,6 +33,7 @@ public final class Native {
     private static final int DEFAULT_RING_SIZE = SystemPropertyUtil.getInt("io.netty.uring.ringSize", 32);
     static {
         loadNativeLibrary();
+        Socket.initialize();
     }
 
     public static RingBuffer createRingBuffer(int ringSize) {
