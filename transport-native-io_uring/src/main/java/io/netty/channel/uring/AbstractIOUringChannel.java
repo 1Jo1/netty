@@ -232,6 +232,9 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
     }
 
     @Override
+    public abstract IOUringChannelConfig config();
+
+    @Override
     protected SocketAddress localAddress0() {
         return null;
     }

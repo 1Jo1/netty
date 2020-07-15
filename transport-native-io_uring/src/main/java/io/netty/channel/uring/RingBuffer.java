@@ -18,6 +18,7 @@ package io.netty.channel.uring;
 import io.netty.util.internal.PlatformDependent;
 
 public class RingBuffer {
+  public static RingBuffer ringBuffer;
   private final IOUringSubmissionQueue ioUringSubmissionQueue;
   private final IOUringCompletionQueue ioUringCompletionQueue;
 

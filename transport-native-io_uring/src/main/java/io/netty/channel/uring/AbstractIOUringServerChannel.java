@@ -29,14 +29,14 @@ public abstract class AbstractIOUringServerChannel extends AbstractIOUringChanne
     private volatile SocketAddress local;
     private IOUringSubmissionQueue submissionQueue;
 
-    AbstractIOUringServerChannel(final Channel parent, final LinuxSocket fd,
-                                 final IOUringSubmissionQueue submissionQueue) {
-        super(parent, fd, submissionQueue);
+   AbstractIOUringServerChannel(int fd,
+                                 IOUringSubmissionQueue submissionQueue) {
+        super(null, new LinuxSocket(fd), submissionQueue);
     }
 
-    @Override
-    public ChannelConfig config() {
-        return null;
+    AbstractIOUringServerChannel(LinuxSocket fd,
+                                 IOUringSubmissionQueue submissionQueue) {
+        super(null, fd, submissionQueue);
     }
 
     @Override

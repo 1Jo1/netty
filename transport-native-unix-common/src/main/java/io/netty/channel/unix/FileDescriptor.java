@@ -232,4 +232,8 @@ public class FileDescriptor {
     private static native int readAddress(int fd, long address, int pos, int limit);
 
     private static native long newPipe();
+
+    public int getFd() {
+        return fd;
+    }
 }

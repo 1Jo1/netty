@@ -31,9 +31,11 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 public class IOUringSocketChannel extends AbstractIOUringChannel implements SocketChannel {
+    private final IOUringSocketChannelConfig config;
 
     IOUringSocketChannel(final Channel parent, final LinuxSocket fd, final IOUringSubmissionQueue submissionQueue) {
         super(parent, fd, submissionQueue);
+        this.config = new IOUringSocketChannelConfig(this);
     }
 
     @Override
@@ -42,8 +44,8 @@ public class IOUringSocketChannel extends AbstractIOUringChannel implements Sock
     }
 
     @Override
-    public SocketChannelConfig config() {
-        return null;
+    public IOUringSocketChannelConfig config() {
+        return config;
     }
 
     @Override
