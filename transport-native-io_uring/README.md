@@ -9,7 +9,7 @@ What is io_uring?
 
 The new io_uring interface added to the Linux Kernel 5.1 is a high I/O performance scalable interface for fully asynchronous Linux syscalls. 
 
-Here is my draft: https://github.com/netty/netty/pull/10356
+Here is my PR: https://github.com/netty/netty/pull/10356
 
 ### Potential Security Vulnerability
 
