@@ -394,6 +394,7 @@ public class Socket extends FileDescriptor {
     private static final AtomicBoolean INITIALIZED = new AtomicBoolean();
 
     public static Socket newSocketStream() {
+        System.out.println("newSocketStream");
         return new Socket(newSocketStream0());
     }
 
