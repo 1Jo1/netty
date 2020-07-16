@@ -26,6 +26,7 @@ import io.netty.channel.ChannelOutboundBuffer;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.EventLoop;
 import io.netty.channel.RecvByteBufAllocator;
+import io.netty.channel.unix.FileDescriptor;
 import io.netty.channel.unix.UnixChannel;
 import io.netty.channel.unix.UnixChannelUtil;
 import io.netty.util.ReferenceCountUtil;
@@ -36,16 +37,25 @@ import java.net.SocketAddress;
 import static io.netty.util.internal.ObjectUtil.*;
 
 public abstract class AbstractIOUringChannel extends AbstractChannel implements UnixChannel {
-    private volatile SocketAddress local;
     private static final ChannelMetadata METADATA = new ChannelMetadata(false);
     final LinuxSocket socket;
     protected volatile boolean active;
     boolean uringInReadyPending;
 
+    private volatile SocketAddress local;
+    private volatile SocketAddress remote;
+
     AbstractIOUringChannel(final Channel parent, LinuxSocket fd) {
         super(parent);
         this.socket = checkNotNull(fd, "fd");
         this.active = true;
+
+        if (active) {
+            // Directly cache the remote and local addresses
+            // See https://github.com/netty/netty/issues/2359
+            this.local = fd.localAddress();
+            this.remote = fd.remoteAddress();
+        }
     }
 
     public boolean isOpen() {
@@ -60,6 +70,11 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
     @Override
     public ChannelMetadata metadata() {
         return METADATA;
+    }
+
+    @Override
+    public FileDescriptor fd() {
+        return socket;
     }
 
     @Override
@@ -127,6 +142,7 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
 
     @Override
     protected void doClose() throws Exception {
+        socket.close();
     }
 
     // Channel/ChannelHandlerContext.read() was called
@@ -229,17 +245,15 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
 
     @Override
     protected SocketAddress localAddress0() {
-        return null;
+        return local;
     }
 
     @Override
     protected SocketAddress remoteAddress0() {
-        return null;
+        return remote;
     }
 
     public LinuxSocket getSocket() {
         return socket;
     }
-
-
 }

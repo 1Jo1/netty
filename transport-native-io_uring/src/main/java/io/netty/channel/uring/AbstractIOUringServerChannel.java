@@ -26,8 +26,6 @@ import java.net.SocketAddress;
 
 public abstract class AbstractIOUringServerChannel extends AbstractIOUringChannel implements ServerChannel {
 
-    private volatile SocketAddress local;
-
    AbstractIOUringServerChannel(int fd) {
         super(null, new LinuxSocket(fd));
     }
@@ -41,24 +39,10 @@ public abstract class AbstractIOUringServerChannel extends AbstractIOUringChanne
         return new UringServerChannelUnsafe();
     }
 
-    @Override
-    protected SocketAddress localAddress0() {
-        return null;
-    }
-
-    @Override
-    protected SocketAddress remoteAddress0() {
-        return null;
-    }
 
     @Override
     protected void doWrite(ChannelOutboundBuffer in) throws Exception {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public FileDescriptor fd() {
-        return null;
     }
 
     public AbstractIOUringChannel getChannel() {
