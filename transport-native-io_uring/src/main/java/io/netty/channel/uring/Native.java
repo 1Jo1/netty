@@ -25,7 +25,6 @@ import io.netty.util.internal.logging.InternalLogger;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 
 import java.io.IOException;
-import java.nio.channels.Selector;
 import java.util.Locale;
 
 public final class Native {

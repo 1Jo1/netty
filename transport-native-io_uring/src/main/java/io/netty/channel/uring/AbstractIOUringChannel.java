@@ -32,7 +32,6 @@ import io.netty.util.ReferenceCountUtil;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.nio.channels.UnresolvedAddressException;
 
 import static io.netty.util.internal.ObjectUtil.*;
 
@@ -219,16 +218,10 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
     @Override
     public void doBind(final SocketAddress localAddress) throws Exception {
         if (local instanceof InetSocketAddress) {
-            checkResolvable((InetSocketAddress) local);
+            //checkResolvable((InetSocketAddress) local);
         }
         socket.bind(local);
         this.local = socket.localAddress();
-    }
-
-    protected static void checkResolvable(InetSocketAddress addr) {
-        if (addr.isUnresolved()) {
-            throw new UnresolvedAddressException();
-        }
     }
 
     @Override
@@ -247,4 +240,6 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
     public LinuxSocket getSocket() {
         return socket;
     }
+
+
 }
