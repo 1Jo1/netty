@@ -67,10 +67,6 @@ public class IOUringSocketChannel extends AbstractIOUringChannel implements Sock
     }
 
     @Override
-    public void doBind(SocketAddress localAddress) throws Exception {
-    }
-
-    @Override
     public boolean isInputShutdown() {
         return false;
     }
