@@ -46,6 +46,14 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include "netty_unix_buffer.h"
+#include "netty_unix_errors.h"
+#include "netty_unix_filedescriptor.h"
+#include "netty_unix_jni.h"
+#include "netty_unix_limits.h"
+#include "netty_unix_socket.h"
+#include "netty_unix_util.h"
+
 static jmethodID ringBufferMethodId = NULL;
 static jmethodID ioUringSubmissionQueueMethodId = NULL;
 static jmethodID ioUringCommpletionQueueMethodId = NULL;
@@ -224,41 +232,32 @@ JNIEXPORT jint JNI_OnLoad(JavaVM *vm, void *reserved) {
     return JNI_ERR;
   }
 
-  // Load all c modules that we depend upon
-    if (netty_unix_limits_JNI_OnLoad(env, packagePrefix) == JNI_ERR) {
-        goto done;
-    }
-    limitsOnLoadCalled = 1;
-
-    if (netty_unix_errors_JNI_OnLoad(env, packagePrefix) == JNI_ERR) {
-        goto done;
-    }
-    errorsOnLoadCalled = 1;
-
-    if (netty_unix_filedescriptor_JNI_OnLoad(env, packagePrefix) == JNI_ERR) {
-        goto done;
-    }
-    filedescriptorOnLoadCalled = 1;
-
-    if (netty_unix_socket_JNI_OnLoad(env, packagePrefix) == JNI_ERR) {
-        goto done;
-    }
-    socketOnLoadCalled = 1;
-
-    if (netty_unix_buffer_JNI_OnLoad(env, packagePrefix) == JNI_ERR) {
-        goto done;
-    }
-    bufferOnLoadCalled = 1;
-
-    if (netty_epoll_linuxsocket_JNI_OnLoad(env, packagePrefix) == JNI_ERR) {
-        goto done;
-    }
-
   if (netty_unix_util_register_natives(env, packagePrefix,
                                        "io/netty/channel/uring/Native",
                                        method_table, method_table_size) != 0) {
     printf("netty register natives error\n");
   }
+
+      // Load all c modules that we depend upon
+    if (netty_unix_limits_JNI_OnLoad(env, packagePrefix) == JNI_ERR) {
+        goto done;
+    }
+
+    if (netty_unix_errors_JNI_OnLoad(env, packagePrefix) == JNI_ERR) {
+        goto done;
+    }
+
+    if (netty_unix_filedescriptor_JNI_OnLoad(env, packagePrefix) == JNI_ERR) {
+        goto done;
+    }
+
+    if (netty_unix_socket_JNI_OnLoad(env, packagePrefix) == JNI_ERR) {
+        goto done;
+    }
+
+    if (netty_unix_buffer_JNI_OnLoad(env, packagePrefix) == JNI_ERR) {
+        goto done;
+    }
 
   NETTY_PREPEND(packagePrefix, "io/netty/channel/uring/RingBuffer",
                 nettyClassName, done);
