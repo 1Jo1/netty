@@ -17,6 +17,7 @@ package io.netty.channel.uring;
 
 import io.netty.channel.Channel;
 import io.netty.channel.socket.ServerSocketChannel;
+import io.netty.channel.unix.FileDescriptor;
 import io.netty.channel.unix.Socket;
 
 import java.net.InetSocketAddress;
@@ -30,7 +31,6 @@ public class IOUringServerSocketChannel extends AbstractIOUringServerChannel imp
         this.config = new IOUringServerSocketChannelConfig(this);
     }
 
-
     @Override
     public void doBind(SocketAddress localAddress) throws Exception {
         super.doBind(localAddress);
@@ -40,7 +40,6 @@ public class IOUringServerSocketChannel extends AbstractIOUringServerChannel imp
     public IOUringServerSocketChannelConfig config() {
         return config;
     }
-
 
     @Override
     Channel newChildChannel(int fd, IOUringSubmissionQueue submissionQueue) throws Exception {
@@ -60,5 +59,10 @@ public class IOUringServerSocketChannel extends AbstractIOUringServerChannel imp
     @Override
     public InetSocketAddress localAddress() {
         return (InetSocketAddress) super.localAddress();
+    }
+
+    @Override
+    public FileDescriptor fd() {
+        return super.fd();
     }
 }

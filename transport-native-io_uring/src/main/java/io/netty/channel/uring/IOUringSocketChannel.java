@@ -67,10 +67,6 @@ public class IOUringSocketChannel extends AbstractIOUringChannel implements Sock
     }
 
     @Override
-    public void doBind(SocketAddress localAddress) throws Exception {
-    }
-
-    @Override
     public boolean isInputShutdown() {
         return false;
     }
@@ -117,17 +113,17 @@ public class IOUringSocketChannel extends AbstractIOUringChannel implements Sock
 
     @Override
     public FileDescriptor fd() {
-        return null;
+        return super.fd();
     }
 
     @Override
     protected SocketAddress localAddress0() {
-        return null;
+        return super.localAddress0();
     }
 
     @Override
     protected SocketAddress remoteAddress0() {
-        return null;
+        return super.remoteAddress0();
     }
 
     @Override
