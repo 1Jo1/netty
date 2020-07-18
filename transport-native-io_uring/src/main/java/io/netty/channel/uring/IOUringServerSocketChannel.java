@@ -41,11 +41,6 @@ public class IOUringServerSocketChannel extends AbstractIOUringServerChannel imp
         return config;
     }
 
-    @Override
-    public boolean isOpen() {
-        return false;
-    }
-
 
     @Override
     Channel newChildChannel(int fd, IOUringSubmissionQueue submissionQueue) throws Exception {
