@@ -100,6 +100,7 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
             event.setAbstractIOUringChannel(this);
             submissionQueue.add(eventId, EventType.READ, socket.getFd(), byteBuf.memoryAddress(),
                                 byteBuf.writerIndex(), byteBuf.capacity());
+            submissionQueue.submit();
         }
     }
 
@@ -176,6 +177,7 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
             event.setAbstractIOUringChannel(this);
             submissionQueue.add(eventId, EventType.WRITE, socket.getFd(), buf.memoryAddress(), buf.readerIndex(),
                                 buf.writerIndex());
+            submissionQueue.submit();
         }
     }
 

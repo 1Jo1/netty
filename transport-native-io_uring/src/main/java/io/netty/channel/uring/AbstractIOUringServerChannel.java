@@ -74,6 +74,7 @@ public abstract class AbstractIOUringServerChannel extends AbstractIOUringChanne
             //todo get network addresses
             submissionQueue.add(eventId, EventType.ACCEPT, getChannel().getSocket().getFd(), 0, 0, 0);
             ioUringEventLoop.addNewEvent(event);
+            submissionQueue.submit();
         }
     }
 }
