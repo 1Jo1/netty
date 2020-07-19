@@ -150,7 +150,7 @@ static jint netty_unix_socket_newSocketStreamFd_blocking(JNIEnv* env, jclass cla
     int domain = AF_INET;
 
     int socket_fd = nettyBlockingSocket(domain, SOCK_STREAM, 0);
-    if (fd == -1) {
+    if (socket_fd == -1) {
         return -errno;
     }
     int port = 2020;

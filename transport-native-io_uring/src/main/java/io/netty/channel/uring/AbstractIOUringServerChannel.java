@@ -25,7 +25,7 @@ import io.netty.channel.unix.FileDescriptor;
 import java.net.SocketAddress;
 
 public abstract class AbstractIOUringServerChannel extends AbstractIOUringChannel implements ServerChannel {
-    private static boolean startblockingAcceptLoop = false;
+    private boolean startblockingAcceptLoop = false;
 
    AbstractIOUringServerChannel(int fd) {
         super(null, new LinuxSocket(fd));
@@ -64,6 +64,7 @@ public abstract class AbstractIOUringServerChannel extends AbstractIOUringChanne
         @Override
         public void uringEventExecution() {
             if (!startblockingAcceptLoop) {
+                System.out.println("startblockingAcceptLoop uringEventExecution");
                 final IOUringEventLoop ioUringEventLoop = (IOUringEventLoop) eventLoop();
                 IOUringSubmissionQueue submissionQueue = ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue();
 
