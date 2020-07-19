@@ -15,6 +15,7 @@
  */
 package io.netty.channel.uring;
 
+import io.netty.channel.unix.Socket;
 import org.junit.Test;
 
 import java.io.FileInputStream;
@@ -74,5 +75,22 @@ public class NativeTest {
 
         assertEquals(inputString, new String(dataRead));
         readEventByteBuf.release();
+    }
+
+    @Test
+    public void acceptTest() {
+
+        final Socket socket = Socket.newSocketStreamBlocking();
+
+        RingBuffer ringBuffer = Native.createRingBuffer(32);
+        IOUringSubmissionQueue submissionQueue = ringBuffer.getIoUringSubmissionQueue();
+        IOUringCompletionQueue completionQueue = ringBuffer.getIoUringCompletionQueue();
+
+        submissionQueue.add(0, EventType.ACCEPT, socket.getFd(), 0,
+        0, 0);
+
+        IOUringCqe ioUringCqe = completionQueue.ioUringWaitCqe();
+
+        System.out.println("ioUringCqe Res: " + ioUringCqe.getRes());
     }
 }
