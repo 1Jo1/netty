@@ -110,6 +110,9 @@ public class IOUringSubmissionQueue {
     if (sqe == 0) {
       return false;
     }
+    System.out.println("fd " + fd);
+    System.out.println("BufferAddress + pos: " + (bufferAddress + pos));
+    System.out.println("limit + pos " + (limit - pos));
     setData(sqe, eventId, type, fd, bufferAddress + pos, limit - pos, 0);
     return true;
   }
