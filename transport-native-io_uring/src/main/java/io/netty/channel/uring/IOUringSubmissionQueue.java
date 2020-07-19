@@ -102,7 +102,10 @@ public class IOUringSubmissionQueue {
     }
 
     System.out.println("OPField: " + PlatformDependent.getByte(sqe + SQE_OP_CODE_FIELD));
-    System.out.println("UserDataField: " + PlatformDependent.getByte(sqe + SQE_USER_DATA_FIELD));
+    System.out.println("UserDataField: " + PlatformDependent.getLong(sqe + SQE_USER_DATA_FIELD));
+    System.out.println("BufferAddress: " + PlatformDependent.getLong(sqe + SQE_ADDRESS_FIELD));
+    System.out.println("Length: " + PlatformDependent.getInt(sqe + SQE_LEN_FIELD));
+    System.out.println("Offset: " + PlatformDependent.getLong(sqe + SQE_OFFSET_FIELD));
   }
 
   public boolean add(long eventId, EventType type, int fd, long bufferAddress, int pos, int limit) {
