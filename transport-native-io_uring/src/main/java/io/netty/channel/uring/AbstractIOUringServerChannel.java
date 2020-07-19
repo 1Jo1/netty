@@ -25,6 +25,7 @@ import io.netty.channel.unix.FileDescriptor;
 import java.net.SocketAddress;
 
 public abstract class AbstractIOUringServerChannel extends AbstractIOUringChannel implements ServerChannel {
+    private static boolean startblockingAcceptLoop = false;
 
    AbstractIOUringServerChannel(int fd) {
         super(null, new LinuxSocket(fd));
@@ -62,19 +63,22 @@ public abstract class AbstractIOUringServerChannel extends AbstractIOUringChanne
 
         @Override
         public void uringEventExecution() {
-            final IOUringEventLoop ioUringEventLoop = (IOUringEventLoop) eventLoop();
-            IOUringSubmissionQueue submissionQueue = ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue();
+            if (!startblockingAcceptLoop) {
+                final IOUringEventLoop ioUringEventLoop = (IOUringEventLoop) eventLoop();
+                IOUringSubmissionQueue submissionQueue = ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue();
 
-            long eventId = ioUringEventLoop.incrementEventIdCounter();
-            final Event event = new Event();
-            event.setId(eventId);
-            event.setOp(EventType.ACCEPT);
-            event.setAbstractIOUringChannel(getChannel());
+                long eventId = ioUringEventLoop.incrementEventIdCounter();
+                final Event event = new Event();
+                event.setId(eventId);
+                event.setOp(EventType.ACCEPT);
+                event.setAbstractIOUringChannel(getChannel());
 
-            //todo get network addresses
-            submissionQueue.add(eventId, EventType.ACCEPT, getChannel().getSocket().getFd(), 0, 0, 0);
-            ioUringEventLoop.addNewEvent(event);
-            submissionQueue.submit();
+                //todo get network addresses
+                submissionQueue.add(eventId, EventType.ACCEPT, getChannel().getSocket().getFd(), 0, 0, 0);
+                ioUringEventLoop.addNewEvent(event);
+                submissionQueue.submit();
+                startblockingAcceptLoop = true;
+            }
         }
     }
 }
