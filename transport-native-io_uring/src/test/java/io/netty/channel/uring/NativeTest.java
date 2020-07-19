@@ -79,18 +79,5 @@ public class NativeTest {
 
     @Test
     public void acceptTest() {
-
-        final Socket socket = Socket.newSocketStreamBlocking();
-
-        RingBuffer ringBuffer = Native.createRingBuffer(32);
-        IOUringSubmissionQueue submissionQueue = ringBuffer.getIoUringSubmissionQueue();
-        IOUringCompletionQueue completionQueue = ringBuffer.getIoUringCompletionQueue();
-
-        submissionQueue.add(0, EventType.ACCEPT, socket.getFd(), 0,
-        0, 0);
-
-        IOUringCqe ioUringCqe = completionQueue.ioUringWaitCqe();
-
-        System.out.println("ioUringCqe Res: " + ioUringCqe.getRes());
     }
 }

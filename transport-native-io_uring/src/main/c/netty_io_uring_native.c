@@ -142,6 +142,20 @@ static jint netty_io_uring_enter(JNIEnv *env, jclass class1, jint ring_fd, jint 
   return sys_io_uring_enter(ring_fd, to_submit, min_complete, flags, NULL);
 }
 
+static int nettyBlockingSocket(int domain, int type, int protocol) {
+    return socket(domain, type, protocol);
+}
+
+static jint netty_unix_socket_newSocketStreamFd_blocking(JNIEnv* env, jclass clazz) {
+    int domain = AF_INET;
+
+    int fd = nettyBlockingSocket(domain, SOCK_STREAM, 0);
+    if (fd == -1) {
+        return -errno;
+    }
+    return fd;
+}
+
 static jobject netty_io_uring_setup(JNIEnv *env, jclass class1, jint entries) {
   struct io_uring_params p;
   memset(&p, 0, sizeof(p));
@@ -200,7 +214,8 @@ static const JNINativeMethod method_table[] = {
     {"ioUringSetup", "(I)Lio/netty/channel/uring/RingBuffer;",
      (void *)netty_io_uring_setup},
     {"createFile", "()J", (void *)netty_create_file},
-    {"ioUringEnter", "(IIII)I", (void *)netty_io_uring_enter}};
+    {"ioUringEnter", "(IIII)I", (void *)netty_io_uring_enter},
+    { "newSocketStreamFdBlocking", "()I", (void *) netty_unix_socket_newSocketStreamFd_blocking }};
 static const jint method_table_size =
     sizeof(method_table) / sizeof(method_table[0]);
 // JNI Method Registration Table End
