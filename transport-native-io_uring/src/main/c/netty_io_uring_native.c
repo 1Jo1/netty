@@ -155,6 +155,7 @@ static jint netty_unix_socket_newSocketStreamFd_blocking(JNIEnv* env, jclass cla
     }
     int port = 2020;
     const int val = 1;
+    struct sockaddr_in serv_addr;
     setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
 
     memset(&serv_addr, 0, sizeof(serv_addr));
@@ -167,7 +168,7 @@ static jint netty_unix_socket_newSocketStreamFd_blocking(JNIEnv* env, jclass cla
         perror("Error binding socket...\n");
         exit(1);
     }
-    if (listen(socket_fd, BACKLOG) < 0) {
+    if (listen(socket_fd, 500) < 0) { //backlog
         perror("Error listening on socket...\n");
         exit(1);
     }
