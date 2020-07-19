@@ -64,6 +64,7 @@ class IOUringEventLoop extends SingleThreadEventLoop {
                 if (event != null) {
                     switch (event.getOp()) {
                         case ACCEPT:
+                            System.out.println("Accept Res: " + ioUringCqe.getRes());
                             if (ioUringCqe.getRes() != -1 && ioUringCqe.getRes() != ERRNO_EAGAIN_NEGATIVE &&
                                     ioUringCqe.getRes() != ERRNO_EWOULDBLOCK_NEGATIVE) {
                                 AbstractIOUringServerChannel abstractIOUringServerChannel =
