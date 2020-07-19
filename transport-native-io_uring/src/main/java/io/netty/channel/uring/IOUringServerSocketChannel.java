@@ -32,11 +32,6 @@ public class IOUringServerSocketChannel extends AbstractIOUringServerChannel imp
     }
 
     @Override
-    public void doBind(SocketAddress localAddress) throws Exception {
-        super.doBind(localAddress);
-    }
-
-    @Override
     public IOUringServerSocketChannelConfig config() {
         return config;
     }
@@ -60,6 +55,14 @@ public class IOUringServerSocketChannel extends AbstractIOUringServerChannel imp
     public InetSocketAddress localAddress() {
         return (InetSocketAddress) super.localAddress();
     }
+
+    @Override
+    public void doBind(SocketAddress localAddress) throws Exception {
+        super.doBind(localAddress);
+        socket.listen(500);
+        active = true;
+    }
+
 
     @Override
     public FileDescriptor fd() {
