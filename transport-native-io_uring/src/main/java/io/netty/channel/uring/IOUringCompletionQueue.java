@@ -57,10 +57,8 @@ public class IOUringCompletionQueue {
 
   public IOUringCqe peek() {
     long cqe = 0;
-    long head = toUnsignedLong(PlatformDependent.getInt(kHeadAddress));
+    long head = toUnsignedLong(PlatformDependent.getIntVolatalile(kHeadAddress));
 
-    //acquire memory barrier https://openjdk.java.net/jeps/171
-    PlatformDependent.loadFence();
     if (head != toUnsignedLong(PlatformDependent.getInt(kTailAddress))) {
         long index = head & toUnsignedLong(PlatformDependent.getInt(kringMaskAddress));
         cqe = index * CQE_SIZE + completionQueueArrayAddress;
@@ -70,8 +68,7 @@ public class IOUringCompletionQueue {
         long flags = toUnsignedLong(PlatformDependent.getInt(cqe + CQE_FLAGS_FIELD));
 
         //Ensure that the kernel only sees the new value of the head index after the CQEs have been read.
-        PlatformDependent.storeFence();
-        PlatformDependent.putInt(kHeadAddress, (int) (head + 1));
+        PlatformDependent.putIntOrdered(kHeadAddress, (int) (head + 1));
 
         return new IOUringCqe(eventId, res, flags);
     }

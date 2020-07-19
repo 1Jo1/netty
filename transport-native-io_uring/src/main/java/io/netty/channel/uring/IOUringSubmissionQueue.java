@@ -139,10 +139,7 @@ public class IOUringSubmissionQueue {
       toSubmit--;
     }
 
-    //release memory barrier
-    PlatformDependent.storeFence();
-
-    PlatformDependent.putInt(kTailAddress, (int) kTail);
+    PlatformDependent.putIntOrdered(kTailAddress, (int) kTail);
 
     return (int) (kTail - kHead);
   }
