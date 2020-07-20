@@ -69,6 +69,7 @@ static int nettyNonBlockingSocket(int domain, int type, int protocol) {
 #endif
 }
 
+//only temporary
 static int nettyBlockingSocket(int domain, int type, int protocol) {
     return socket(domain, type, protocol);
 }
@@ -617,6 +618,7 @@ static jint netty_unix_socket_newSocketStreamFd(JNIEnv* env, jclass clazz, jbool
     return _socket(env, clazz, domain, SOCK_STREAM);
 }
 
+//only temporary
 static jint netty_unix_socket_newSocketStreamFd_blocking(JNIEnv* env, jclass clazz, jboolean ipv6) {
     int domain = ipv6 == JNI_TRUE ? AF_INET6 : AF_INET;
 
