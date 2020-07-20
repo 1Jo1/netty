@@ -160,35 +160,6 @@ static int nettyBlockingSocket(int domain, int type, int protocol) {
     return socket(domain, type, protocol);
 }
 
-static jint netty_unix_socket_newSocketStreamFd_blocking(JNIEnv* env, jclass clazz) {
-    int domain = AF_INET;
-
-    int socket_fd = nettyBlockingSocket(domain, SOCK_STREAM, 0);
-    if (socket_fd == -1) {
-        return -errno;
-    }
-    int port = 2020;
-    const int val = 1;
-    struct sockaddr_in serv_addr;
-    setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &val, sizeof(val));
-
-    memset(&serv_addr, 0, sizeof(serv_addr));
-    serv_addr.sin_family = AF_INET;
-    serv_addr.sin_port = htons(port);
-    serv_addr.sin_addr.s_addr = INADDR_ANY;
-
-    // bind and listen
-    if (bind(socket_fd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-        perror("Error binding socket...\n");
-        exit(1);
-    }
-    if (listen(socket_fd, 500) < 0) { //backlog
-        perror("Error listening on socket...\n");
-        exit(1);
-    }
-    return socket_fd;
-}
-
 static jobject netty_io_uring_setup(JNIEnv *env, jclass class1, jint entries) {
     struct io_uring_params p;
     memset(&p, 0, sizeof(p));
@@ -244,8 +215,7 @@ static void netty_io_uring_native_JNI_OnUnLoad(JNIEnv *env) {
 static const JNINativeMethod method_table[] = {
     {"ioUringSetup", "(I)Lio/netty/channel/uring/RingBuffer;", (void *)netty_io_uring_setup},
     {"createFile", "()J", (void *)netty_create_file},
-    {"ioUringEnter", "(IIII)I", (void *)netty_io_uring_enter},
-    { "newSocketStreamFdBlocking", "()I", (void *) netty_unix_socket_newSocketStreamFd_blocking }};
+    {"ioUringEnter", "(IIII)I", (void *)netty_io_uring_enter}};
 static const jint method_table_size =
     sizeof(method_table) / sizeof(method_table[0]);
 // JNI Method Registration Table End

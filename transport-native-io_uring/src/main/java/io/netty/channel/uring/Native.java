@@ -49,8 +49,6 @@ public final class Native {
 
     public static native int ioUringEnter(int ringFd, int toSubmit, int minComplete, int flags);
 
-    public static native int newSocketStreamFdBlocking();
-
     // for testing(it is only temporary)
     public static native long createFile();
 
