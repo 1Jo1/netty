@@ -238,9 +238,4 @@ public class FileDescriptor {
     }
 
     private static native long newPipe();
-
-    public int getFd() {
-        System.out.println("Get Fd");
-        return fd;
-    }
 }
