@@ -37,7 +37,7 @@ import java.nio.channels.UnresolvedAddressException;
 
 import static io.netty.util.internal.ObjectUtil.*;
 
-public abstract class AbstractIOUringChannel extends AbstractChannel implements UnixChannel {
+abstract class AbstractIOUringChannel extends AbstractChannel implements UnixChannel {
     private static final ChannelMetadata METADATA = new ChannelMetadata(false);
     final LinuxSocket socket;
     protected volatile boolean active;
@@ -173,7 +173,7 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
         }
     }
 
-    protected final void doWriteBytes(ByteBuf buf) throws Exception {
+    protected final void doWriteBytes(ByteBuf buf) {
         if (buf.hasMemoryAddress()) {
             IOUringEventLoop ioUringEventLoop = (IOUringEventLoop) eventLoop();
             IOUringSubmissionQueue submissionQueue = ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue();

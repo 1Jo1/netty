@@ -24,7 +24,7 @@ import io.netty.channel.unix.FileDescriptor;
 
 import java.net.SocketAddress;
 
-public abstract class AbstractIOUringServerChannel extends AbstractIOUringChannel implements ServerChannel {
+abstract class AbstractIOUringServerChannel extends AbstractIOUringChannel implements ServerChannel {
     private boolean startblockingAcceptLoop = false;
 
    AbstractIOUringServerChannel(int fd) {

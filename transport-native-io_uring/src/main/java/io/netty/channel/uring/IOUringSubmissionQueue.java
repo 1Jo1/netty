@@ -110,6 +110,7 @@ public class IOUringSubmissionQueue {
         System.out.println("Offset: " + PlatformDependent.getLong(sqe + SQE_OFFSET_FIELD));
     }
 
+    //Todo ring buffer errors for example if submission queue is full
     public boolean add(long eventId, EventType type, int fd, long bufferAddress, int pos, int limit) {
         long sqe = getSqe();
         if (sqe == 0) {
