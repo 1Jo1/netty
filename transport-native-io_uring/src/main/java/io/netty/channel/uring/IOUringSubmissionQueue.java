@@ -19,21 +19,21 @@ import io.netty.util.internal.PlatformDependent;
 
 public class IOUringSubmissionQueue {
 
-    private final int SQE_SIZE = 64;
-    private final int INT_SIZE = Integer.BYTES; //no 32 Bit support?
+    private static final int SQE_SIZE = 64;
+    private static final int INT_SIZE = Integer.BYTES; //no 32 Bit support?
 
     //these offsets are used to access specific properties
     //SQE https://github.com/axboe/liburing/blob/master/src/include/liburing/io_uring.h#L21
-    private final int SQE_OP_CODE_FIELD = 0;
-    private final int SQE_FLAGS_FIELD = 1;
-    private final int SQE_IOPRIO_FIELD = 2; // u16
-    private final int SQE_FD_FIELD = 4; // s32
-    private final int SQE_OFFSET_FIELD = 8;
-    private final int SQE_ADDRESS_FIELD = 16;
-    private final int SQE_LEN_FIELD = 24;
-    private final int SQE_RW_FLAGS_FIELD = 28;
-    private final int SQE_USER_DATA_FIELD = 32;
-    private final int SQE_PAD_FIELD = 40;
+    private static final int SQE_OP_CODE_FIELD = 0;
+    private static final int SQE_FLAGS_FIELD = 1;
+    private static final int SQE_IOPRIO_FIELD = 2; // u16
+    private static final int SQE_FD_FIELD = 4; // s32
+    private static final int SQE_OFFSET_FIELD = 8;
+    private static final int SQE_ADDRESS_FIELD = 16;
+    private static final int SQE_LEN_FIELD = 24;
+    private static final int SQE_RW_FLAGS_FIELD = 28;
+    private static final int SQE_USER_DATA_FIELD = 32;
+    private static final int SQE_PAD_FIELD = 40;
 
     //these unsigned integer pointers(shared with the kernel) will be changed by the kernel
     private final long kHeadAddress;
