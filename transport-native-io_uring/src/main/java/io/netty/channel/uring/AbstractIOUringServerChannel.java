@@ -50,7 +50,7 @@ public abstract class AbstractIOUringServerChannel extends AbstractIOUringChanne
         return this;
     }
 
-    abstract Channel newChildChannel(int fd, IOUringSubmissionQueue submissionQueue) throws Exception;
+    abstract Channel newChildChannel(int fd) throws Exception;
 
     final class UringServerChannelUnsafe extends AbstractIOUringChannel.AbstractUringUnsafe {
         private final byte[] acceptedAddress = new byte[26];

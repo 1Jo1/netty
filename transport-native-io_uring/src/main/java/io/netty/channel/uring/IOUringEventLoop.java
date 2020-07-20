@@ -72,19 +72,18 @@ class IOUringEventLoop extends SingleThreadEventLoop {
                                                                           .recvBufAllocHandle();
                             final ChannelPipeline pipeline = event.getAbstractIOUringChannel().pipeline();
 
-                            allocHandle.incMessagesRead(1);
-                            try {
-                                pipeline.fireChannelRead(abstractIOUringServerChannel
-                                                                 .newChildChannel(
-                                                                         abstractIOUringServerChannel.getChannel()
-                                                                                                     .getSocket()
-                                                                                                     .getFd(),
-                                                                         ringBuffer.getIoUringSubmissionQueue()));
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            allocHandle.lastBytesRead(ioUringCqe.getRes());
+                            if (allocHandle.lastBytesRead() != -1) {
+                                allocHandle.incMessagesRead(1);
+                                try {
+                                    pipeline.fireChannelRead(abstractIOUringServerChannel
+                                                                     .newChildChannel(allocHandle.lastBytesRead()));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                allocHandle.readComplete();
+                                pipeline.fireChannelReadComplete();
                             }
-                            allocHandle.readComplete();
-                            pipeline.fireChannelReadComplete();
                         }
                         long eventId = incrementEventIdCounter();
                         event.setId(eventId);
