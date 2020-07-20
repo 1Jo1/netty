@@ -158,6 +158,11 @@ public abstract class AbstractIOUringChannel extends AbstractChannel implements 
         }
     }
 
+    public void executeReadEvent() {
+        final AbstractUringUnsafe unsafe = (AbstractUringUnsafe) unsafe();
+        unsafe.executeUringReadOperator();
+    }
+
     @Override
     protected void doWrite(ChannelOutboundBuffer in) throws Exception {
         if (in.size() == 1) {

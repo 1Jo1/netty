@@ -123,7 +123,7 @@ class IOUringEventLoop extends SingleThreadEventLoop {
                         byteBuf = null;
                         allocHandle.readComplete();
                         pipeline.fireChannelReadComplete();
-
+                        event.getAbstractIOUringChannel().executeReadEvent();
                         break;
                     case WRITE:
                         System.out.println("Eventloop Write Res: " + ioUringCqe.getRes());
