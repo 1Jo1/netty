@@ -56,16 +56,17 @@ class IOUringEventLoop extends SingleThreadEventLoop {
 
             if (ioUringCqe != null) {
                 final Event event = events.get(ioUringCqe.getEventId());
-                System.out.println("EventId: " + ioUringCqe.getEventId());
+                System.out.println("Completion EventId: " + ioUringCqe.getEventId());
 
                 if (event != null) {
                     switch (event.getOp()) {
                     case ACCEPT:
-                        System.out.println("Accept Res: " + ioUringCqe.getRes());
+                        System.out.println("Eventloop Accept Res: " + ioUringCqe.getRes());
                         if (ioUringCqe.getRes() != -1 && ioUringCqe.getRes() != ERRNO_EAGAIN_NEGATIVE &&
                             ioUringCqe.getRes() != ERRNO_EWOULDBLOCK_NEGATIVE) {
                             AbstractIOUringServerChannel abstractIOUringServerChannel =
                                     (AbstractIOUringServerChannel) event.getAbstractIOUringChannel();
+                            System.out.println("Eventloop Fd: "+ abstractIOUringServerChannel.getSocket().getFd());
                             final IOUringRecvByteAllocatorHandle allocHandle =
                                     (IOUringRecvByteAllocatorHandle) event.getAbstractIOUringChannel().unsafe()
                                                                           .recvBufAllocHandle();
@@ -96,6 +97,8 @@ class IOUringEventLoop extends SingleThreadEventLoop {
                         ringBuffer.getIoUringSubmissionQueue().submit();
                         break;
                     case READ:
+                        System.out.println("Eventlloop Read Res: " + ioUringCqe.getRes());
+                        System.out.println("Eventloop Fd: " + event.getAbstractIOUringChannel().getSocket().getFd());
                         ByteBuf byteBuf = event.getReadBuffer();
                         int localReadAmount = ioUringCqe.getRes();
                         if (localReadAmount > 0) {
@@ -124,6 +127,8 @@ class IOUringEventLoop extends SingleThreadEventLoop {
 
                         break;
                     case WRITE:
+                        System.out.println("Eventloop Write Res: " + ioUringCqe.getRes());
+                        System.out.println("Eventloop Fd: " + event.getAbstractIOUringChannel().getSocket().getFd());
                         //remove bytes
                         int localFlushAmount = ioUringCqe.getRes();
                         if (localFlushAmount > 0) {
