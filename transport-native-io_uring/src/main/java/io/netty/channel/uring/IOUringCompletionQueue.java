@@ -21,13 +21,13 @@ public class IOUringCompletionQueue {
 
   //these offsets are used to access specific properties
   //CQE (https://github.com/axboe/liburing/blob/master/src/include/liburing/io_uring.h#L162)
-  private final int CQE_USER_DATA_FIELD = 0;
-  private final int CQE_RES_FIELD = 8;
-  private final int CQE_FLAGS_FIELD = 12;
+  private static final int CQE_USER_DATA_FIELD = 0;
+  private static final int CQE_RES_FIELD = 8;
+  private static final int CQE_FLAGS_FIELD = 12;
 
-  private final int CQE_SIZE = 16;
+  private static final int CQE_SIZE = 16;
 
-  private final int IORING_ENTER_GETEVENTS = 1;
+  private static final int IORING_ENTER_GETEVENTS = 1;
 
   //these unsigned integer pointers(shared with the kernel) will be changed by the kernel
   private final long kHeadAddress;
