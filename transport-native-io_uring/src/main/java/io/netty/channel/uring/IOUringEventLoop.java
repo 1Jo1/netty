@@ -139,6 +139,11 @@ class IOUringEventLoop extends SingleThreadEventLoop {
             if (hasTasks()) {
                 runAllTasks();
             }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
