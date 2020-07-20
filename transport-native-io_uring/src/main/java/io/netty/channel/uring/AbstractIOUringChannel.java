@@ -24,6 +24,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelMetadata;
 import io.netty.channel.ChannelOutboundBuffer;
 import io.netty.channel.ChannelPromise;
+import io.netty.channel.DefaultChannelConfig;
 import io.netty.channel.EventLoop;
 import io.netty.channel.RecvByteBufAllocator;
 import io.netty.channel.unix.FileDescriptor;
@@ -199,26 +200,23 @@ abstract class AbstractIOUringChannel extends AbstractChannel implements UnixCha
             }
         };
 
-        /**
-         * Create a new {@link } instance.
-         *
-         * @param handle The handle to wrap with EPOLL specific logic.
-         */
-        IOUringRecvByteAllocatorHandle newEpollHandle(RecvByteBufAllocator.ExtendedHandle handle) {
+        IOUringRecvByteAllocatorHandle newIOUringHandle(RecvByteBufAllocator.ExtendedHandle handle) {
             return new IOUringRecvByteAllocatorHandle(handle);
         }
 
         @Override
         public IOUringRecvByteAllocatorHandle recvBufAllocHandle() {
             if (allocHandle == null) {
-                allocHandle = newEpollHandle((RecvByteBufAllocator.ExtendedHandle) super.recvBufAllocHandle());
+                allocHandle = newIOUringHandle((RecvByteBufAllocator.ExtendedHandle) super.recvBufAllocHandle());
             }
             return allocHandle;
         }
 
+        //Todo
         @Override
         public void connect(final SocketAddress remoteAddress, final SocketAddress localAddress,
                             final ChannelPromise promise) {
+            promise.setFailure(new Exception());
         }
 
         final void executeUringReadOperator() {
@@ -248,7 +246,6 @@ abstract class AbstractIOUringChannel extends AbstractChannel implements UnixCha
         }
         socket.bind(local);
         this.local = socket.localAddress();
-
     }
 
     protected static void checkResolvable(InetSocketAddress addr) {

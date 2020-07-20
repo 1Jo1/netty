@@ -63,7 +63,6 @@ public class IOUringServerSocketChannel extends AbstractIOUringServerChannel imp
         active = true;
     }
 
-
     @Override
     public FileDescriptor fd() {
         return super.fd();

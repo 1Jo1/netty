@@ -76,10 +76,4 @@ public class NativeTest {
         assertEquals(inputString, new String(dataRead));
         readEventByteBuf.release();
     }
-
-    @Test
-    public void acceptTest() {
-
-
-    }
 }

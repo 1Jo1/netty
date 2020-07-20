@@ -50,7 +50,7 @@ class IOUringEventLoop extends SingleThreadEventLoop {
 
     @Override
     protected void run() {
-        for (; ; ) {
+        for (;;) {
             final IOUringCompletionQueue ioUringCompletionQueue = ringBuffer.getIoUringCompletionQueue();
             final IOUringCqe ioUringCqe = ioUringCompletionQueue.peek(); // or waiting
 
@@ -61,12 +61,12 @@ class IOUringEventLoop extends SingleThreadEventLoop {
                 if (event != null) {
                     switch (event.getOp()) {
                     case ACCEPT:
-                        System.out.println("Eventloop Accept Res: " + ioUringCqe.getRes());
+                        System.out.println("EventLoop Accept Res: " + ioUringCqe.getRes());
                         if (ioUringCqe.getRes() != -1 && ioUringCqe.getRes() != ERRNO_EAGAIN_NEGATIVE &&
                             ioUringCqe.getRes() != ERRNO_EWOULDBLOCK_NEGATIVE) {
                             AbstractIOUringServerChannel abstractIOUringServerChannel =
                                     (AbstractIOUringServerChannel) event.getAbstractIOUringChannel();
-                            System.out.println("Eventloop Fd: "+ abstractIOUringServerChannel.getSocket().getFd());
+                            System.out.println("EventLoop Fd: " + abstractIOUringServerChannel.getSocket().getFd());
                             final IOUringRecvByteAllocatorHandle allocHandle =
                                     (IOUringRecvByteAllocatorHandle) event.getAbstractIOUringChannel().unsafe()
                                                                           .recvBufAllocHandle();

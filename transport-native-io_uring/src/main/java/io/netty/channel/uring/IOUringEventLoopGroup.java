@@ -27,7 +27,7 @@ import io.netty.util.concurrent.RejectedExecutionHandlers;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 
-public class IOUringEventLoopGroup extends MultithreadEventLoopGroup {
+public final class IOUringEventLoopGroup extends MultithreadEventLoopGroup {
 
     /**
      * Create a new instance using the default number of threads and the default {@link ThreadFactory}.

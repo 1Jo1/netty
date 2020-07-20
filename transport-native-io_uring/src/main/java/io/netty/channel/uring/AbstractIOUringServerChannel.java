@@ -16,18 +16,15 @@
 package io.netty.channel.uring;
 
 import io.netty.channel.Channel;
-import io.netty.channel.ChannelConfig;
 import io.netty.channel.ChannelOutboundBuffer;
 import io.netty.channel.ChannelPromise;
 import io.netty.channel.ServerChannel;
-import io.netty.channel.unix.FileDescriptor;
 
 import java.net.SocketAddress;
 
 abstract class AbstractIOUringServerChannel extends AbstractIOUringChannel implements ServerChannel {
-    private boolean startblockingAcceptLoop = false;
 
-   AbstractIOUringServerChannel(int fd) {
+    AbstractIOUringServerChannel(int fd) {
         super(null, new LinuxSocket(fd));
     }
 
@@ -39,7 +36,6 @@ abstract class AbstractIOUringServerChannel extends AbstractIOUringChannel imple
     protected AbstractUringUnsafe newUnsafe() {
         return new UringServerChannelUnsafe();
     }
-
 
     @Override
     protected void doWrite(ChannelOutboundBuffer in) throws Exception {
@@ -63,23 +59,20 @@ abstract class AbstractIOUringServerChannel extends AbstractIOUringChannel imple
 
         @Override
         public void uringEventExecution() {
-            if (!startblockingAcceptLoop) {
-                System.out.println("startblockingAcceptLoop uringEventExecution");
-                final IOUringEventLoop ioUringEventLoop = (IOUringEventLoop) eventLoop();
-                IOUringSubmissionQueue submissionQueue = ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue();
+            final IOUringEventLoop ioUringEventLoop = (IOUringEventLoop) eventLoop();
+            IOUringSubmissionQueue submissionQueue = ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue();
 
-                long eventId = ioUringEventLoop.incrementEventIdCounter();
-                final Event event = new Event();
-                event.setId(eventId);
-                event.setOp(EventType.ACCEPT);
-                event.setAbstractIOUringChannel(getChannel());
+            long eventId = ioUringEventLoop.incrementEventIdCounter();
+            final Event event = new Event();
+            event.setId(eventId);
+            event.setOp(EventType.ACCEPT);
+            event.setAbstractIOUringChannel(getChannel());
 
-                //todo get network addresses
-                submissionQueue.add(eventId, EventType.ACCEPT, getChannel().getSocket().getFd(), 0, 0, 0);
-                ioUringEventLoop.addNewEvent(event);
-                submissionQueue.submit();
-                startblockingAcceptLoop = true;
-            }
+            //Todo get network addresses
+            submissionQueue.add(eventId, EventType.ACCEPT, getChannel().getSocket().getFd(), 0, 0, 0);
+            ioUringEventLoop.addNewEvent(event);
+            submissionQueue.submit();
         }
     }
 }
+
