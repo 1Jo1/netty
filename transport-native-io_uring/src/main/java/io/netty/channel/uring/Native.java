@@ -45,7 +45,7 @@ final class Native {
     public static native int ioUringEnter(int ringFd, int toSubmit, int minComplete, int flags);
 
     // for testing(it is only temporary)
-    public static native long createFile();
+    public static native int createFile();
 
     private Native() {
         // utility

@@ -197,7 +197,7 @@ static jobject netty_io_uring_setup(JNIEnv *env, jclass class1, jint entries) {
     return ringBuffer;
 }
 
-static jlong netty_create_file(JNIEnv *env, jclass class) {
+static jint netty_create_file(JNIEnv *env, jclass class) {
     return open("io-uring-test.txt", O_RDWR | O_TRUNC | O_CREAT, 0644);
 }
 
@@ -208,7 +208,7 @@ static void netty_io_uring_native_JNI_OnUnLoad(JNIEnv *env) {
 // JNI Method Registration Table Begin
 static const JNINativeMethod method_table[] = {
     {"ioUringSetup", "(I)Lio/netty/channel/uring/RingBuffer;", (void *)netty_io_uring_setup},
-    {"createFile", "()J", (void *)netty_create_file},
+    {"createFile", "()I", (void *)netty_create_file},
     {"ioUringEnter", "(IIII)I", (void *)netty_io_uring_enter}};
 static const jint method_table_size =
     sizeof(method_table) / sizeof(method_table[0]);
