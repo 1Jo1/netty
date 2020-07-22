@@ -17,7 +17,7 @@ package io.netty.channel.uring;
 
 import io.netty.util.internal.PlatformDependent;
 
-public class IOUringSubmissionQueue {
+final class IOUringSubmissionQueue {
 
     private static final int SQE_SIZE = 64;
     private static final int INT_SIZE = Integer.BYTES; //no 32 Bit support?
@@ -53,7 +53,7 @@ public class IOUringSubmissionQueue {
     private final long ringAddress;
     private final int ringFd;
 
-    public IOUringSubmissionQueue(long kHeadAddress, long kTailAddress, long kRingMaskAddress, long kRingEntriesAddress,
+    IOUringSubmissionQueue(long kHeadAddress, long kTailAddress, long kRingMaskAddress, long kRingEntriesAddress,
                                   long fFlagsAdress, long kDroppedAddress, long arrayAddress,
                                   long submissionQueueArrayAddress, int ringSize,
                                   long ringAddress, int ringFd) {
@@ -70,17 +70,17 @@ public class IOUringSubmissionQueue {
         this.ringFd = ringFd;
     }
 
-  public long getSqe() {
-    long next = sqeTail + 1;
-    long kRingEntries = toUnsignedLong(PlatformDependent.getInt(kRingEntriesAddress));
-    long sqe = 0;
-    if ((next - sqeHead) <= kRingEntries) {
-      long index = sqeTail & toUnsignedLong(PlatformDependent.getInt(kRingMaskAddress));
-      sqe = SQE_SIZE * index + submissionQueueArrayAddress;
-      sqeTail = next;
+    public long getSqe() {
+        long next = sqeTail + 1;
+        long kRingEntries = toUnsignedLong(PlatformDependent.getInt(kRingEntriesAddress));
+        long sqe = 0;
+        if ((next - sqeHead) <= kRingEntries) {
+            long index = sqeTail & toUnsignedLong(PlatformDependent.getInt(kRingMaskAddress));
+            sqe = SQE_SIZE * index + submissionQueueArrayAddress;
+            sqeTail = next;
+        }
+        return sqe;
     }
-    return sqe;
-  }
 
     private void setData(long sqe, long eventId, EventType type, int fd, long bufferAddress, int length, long offset) {
         //Todo cleaner
