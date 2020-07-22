@@ -17,11 +17,14 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include "netty_unix_buffer.h"
 #include "netty_unix_errors.h"
 #include "netty_unix_filedescriptor.h"
 #include "netty_unix_jni.h"
+#include "netty_unix_limits.h"
 #include "netty_unix_socket.h"
 #include "netty_unix_util.h"
+
 #ifndef NETTY_IO_URING
 #define NETTY_IO_URING
 

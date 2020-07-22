@@ -69,22 +69,6 @@ public class IOUringSubmissionQueue {
         this.ringAddress = ringAddress;
         this.ringFd = ringFd;
     }
-    public IOUringSubmissionQueue(long kHeadAddress, long kTailAddress, long kRingMaskAddress, long kRingEntriesAddress,
-                                  long fFlagsAdress, long kDroppedAddress, long arrayAddress,
-                                  long submissionQueueArrayAddress, int ringSize,
-                                  long ringAddress, int ringFd) {
-        this.kHeadAddress = kHeadAddress;
-        this.kTailAddress = kTailAddress;
-        this.kRingMaskAddress = kRingMaskAddress;
-        this.kRingEntriesAddress = kRingEntriesAddress;
-        this.fFlagsAdress = fFlagsAdress;
-        this.kDroppedAddress = kDroppedAddress;
-        this.arrayAddress = arrayAddress;
-        this.submissionQueueArrayAddress = submissionQueueArrayAddress;
-        this.ringSize = ringSize;
-        this.ringAddress = ringAddress;
-        this.ringFd = ringFd;
-    }
 
   public long getSqe() {
     long next = sqeTail + 1;

@@ -56,14 +56,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "netty_unix_buffer.h"
-#include "netty_unix_errors.h"
-#include "netty_unix_filedescriptor.h"
-#include "netty_unix_jni.h"
-#include "netty_unix_limits.h"
-#include "netty_unix_socket.h"
-#include "netty_unix_util.h"
-
 static jmethodID ringBufferMethodId = NULL;
 static jmethodID ioUringSubmissionQueueMethodId = NULL;
 static jmethodID ioUringCommpletionQueueMethodId = NULL;
@@ -76,14 +68,6 @@ void io_uring_unmap_rings(struct io_uring_sq *sq, struct io_uring_cq *cq) {
     if (cq->ring_ptr && cq->ring_ptr != sq->ring_ptr) {
         munmap(cq->ring_ptr, cq->ring_sz);
   }
-}
-
-
-static void io_uring_unmap_rings(struct io_uring_sq *sq, struct io_uring_cq *cq)
-{
-	munmap(sq->ring_ptr, sq->ring_sz);
-	if (cq->ring_ptr && cq->ring_ptr != sq->ring_ptr)
-		munmap(cq->ring_ptr, cq->ring_sz);
 }
 
 static int io_uring_mmap(int fd, struct io_uring_params *p,
