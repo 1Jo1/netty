@@ -394,7 +394,6 @@ public class Socket extends FileDescriptor {
     private static final AtomicBoolean INITIALIZED = new AtomicBoolean();
 
     public static Socket newSocketStream() {
-        System.out.println("newSocketStream");
         return new Socket(newSocketStream0());
     }
 
@@ -429,6 +428,7 @@ public class Socket extends FileDescriptor {
         return res;
     }
 
+    //only temporary
     protected static int newSocketStreamBlocking(boolean ipv6) {
         int res = newSocketStreamFdBlocking(ipv6);
         if (res < 0) {

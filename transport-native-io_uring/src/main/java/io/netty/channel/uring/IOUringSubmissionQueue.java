@@ -68,20 +68,35 @@ public class IOUringSubmissionQueue {
         this.ringSize = ringSize;
         this.ringAddress = ringAddress;
         this.ringFd = ringFd;
-        int test = Integer.BYTES;
+    }
+    public IOUringSubmissionQueue(long kHeadAddress, long kTailAddress, long kRingMaskAddress, long kRingEntriesAddress,
+                                  long fFlagsAdress, long kDroppedAddress, long arrayAddress,
+                                  long submissionQueueArrayAddress, int ringSize,
+                                  long ringAddress, int ringFd) {
+        this.kHeadAddress = kHeadAddress;
+        this.kTailAddress = kTailAddress;
+        this.kRingMaskAddress = kRingMaskAddress;
+        this.kRingEntriesAddress = kRingEntriesAddress;
+        this.fFlagsAdress = fFlagsAdress;
+        this.kDroppedAddress = kDroppedAddress;
+        this.arrayAddress = arrayAddress;
+        this.submissionQueueArrayAddress = submissionQueueArrayAddress;
+        this.ringSize = ringSize;
+        this.ringAddress = ringAddress;
+        this.ringFd = ringFd;
     }
 
-    public long getSqe() {
-        long next = sqeTail + 1;
-        long kRingEntries = toUnsignedLong(PlatformDependent.getInt(kRingEntriesAddress));
-        long sqe = 0;
-        if ((next - sqeHead) <= kRingEntries) {
-            long index = sqeTail & toUnsignedLong(PlatformDependent.getInt(kRingMaskAddress));
-            sqe = SQE_SIZE * index + submissionQueueArrayAddress;
-            sqeTail = next;
-        }
-        return sqe;
+  public long getSqe() {
+    long next = sqeTail + 1;
+    long kRingEntries = toUnsignedLong(PlatformDependent.getInt(kRingEntriesAddress));
+    long sqe = 0;
+    if ((next - sqeHead) <= kRingEntries) {
+      long index = sqeTail & toUnsignedLong(PlatformDependent.getInt(kRingMaskAddress));
+      sqe = SQE_SIZE * index + submissionQueueArrayAddress;
+      sqeTail = next;
     }
+    return sqe;
+  }
 
     private void setData(long sqe, long eventId, EventType type, int fd, long bufferAddress, int length, long offset) {
         //Todo cleaner
@@ -125,7 +140,7 @@ public class IOUringSubmissionQueue {
 
     private int flushSqe() {
         long kTail = toUnsignedLong(PlatformDependent.getInt(kTailAddress));
-        long kHead = toUnsignedLong(PlatformDependent.getInt(kHeadAddress));
+        long kHead = toUnsignedLong(PlatformDependent.getIntVolatalile(kHeadAddress));
         long kRingMask = toUnsignedLong(PlatformDependent.getInt(kRingMaskAddress));
 
         System.out.println("Ktail: " + kTail);
