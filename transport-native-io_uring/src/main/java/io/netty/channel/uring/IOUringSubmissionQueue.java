@@ -53,6 +53,10 @@ final class IOUringSubmissionQueue {
     private final long ringAddress;
     private final int ringFd;
 
+    private static int SOCK_NONBLOCK = 2048;
+    private static int SOCK_CLOEXEC = 524288;
+
+
     IOUringSubmissionQueue(long kHeadAddress, long kTailAddress, long kRingMaskAddress, long kRingEntriesAddress,
                                   long fFlagsAdress, long kDroppedAddress, long arrayAddress,
                                   long submissionQueueArrayAddress, int ringSize,
@@ -92,8 +96,15 @@ final class IOUringSubmissionQueue {
         PlatformDependent.putLong(sqe + SQE_OFFSET_FIELD, offset);
         PlatformDependent.putLong(sqe + SQE_ADDRESS_FIELD, bufferAddress);
         PlatformDependent.putInt(sqe + SQE_LEN_FIELD, length);
-        PlatformDependent.putInt(sqe + SQE_RW_FLAGS_FIELD, 0);
         PlatformDependent.putLong(sqe + SQE_USER_DATA_FIELD, eventId);
+
+        //c union set Rw-Flags or accept_flags
+        if (type != EventType.ACCEPT) {
+            PlatformDependent.putInt(sqe + SQE_RW_FLAGS_FIELD, 0);
+        } else {
+            //accept_flags set NON_BLOCKING
+            PlatformDependent.putInt(sqe + SQE_RW_FLAGS_FIELD, SOCK_NONBLOCK | SOCK_CLOEXEC);
+        }
 
         // pad field array -> all fields should be zero
         long offsetIndex = 0;

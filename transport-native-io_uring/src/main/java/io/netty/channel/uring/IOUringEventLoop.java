@@ -96,8 +96,8 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
                         ringBuffer.getIoUringSubmissionQueue().submit();
                         break;
                     case READ:
-                        System.out.println("Eventlloop Read Res: " + ioUringCqe.getRes());
-                        System.out.println("Eventloop Fd: " + event.getAbstractIOUringChannel().getSocket().getFd());
+                        System.out.println("EventLoop Read Res: " + ioUringCqe.getRes());
+                        System.out.println("EventLoop Fd: " + event.getAbstractIOUringChannel().getSocket().getFd());
                         ByteBuf byteBuf = event.getReadBuffer();
                         int localReadAmount = ioUringCqe.getRes();
                         if (localReadAmount > 0) {
@@ -135,8 +135,6 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
                         }
                         break;
                     }
-                } else {
-                    System.out.println("Event is null!!!! ");
                 }
             }
             //run tasks
