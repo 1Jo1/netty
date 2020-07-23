@@ -15,17 +15,10 @@
  */
 package io.netty.channel.uring;
 
-import io.netty.channel.unix.Socket;
 import org.junit.Test;
-
-import java.io.FileInputStream;
-
-import java.io.File;
 import java.nio.charset.Charset;
-
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.UnpooledByteBufAllocator;
-import io.netty.buffer.UnpooledUnsafeDirectByteBuf;
 import static org.junit.Assert.*;
 import io.netty.buffer.ByteBuf;
 
