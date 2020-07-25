@@ -27,7 +27,7 @@ public final class IOUringServerSocketChannel extends AbstractIOUringServerChann
     private final IOUringServerSocketChannelConfig config;
 
     public IOUringServerSocketChannel() {
-        super(Socket.newSocketStreamBlocking().getFd());
+        super(Socket.newSocketStream().getFd());
         this.config = new IOUringServerSocketChannelConfig(this);
     }
 

@@ -73,7 +73,7 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
                             final ChannelPipeline pipeline = event.getAbstractIOUringChannel().pipeline();
 
                             allocHandle.lastBytesRead(ioUringCqe.getRes());
-                            if (allocHandle.lastBytesRead() != -1) {
+                            if (allocHandle.lastBytesRead() > 0) {
                                 allocHandle.incMessagesRead(1);
                                 try {
                                     pipeline.fireChannelRead(abstractIOUringServerChannel
@@ -126,8 +126,9 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
                         event.getAbstractIOUringChannel().executeReadEvent();
                         break;
                     case WRITE:
-                        System.out.println("Eventloop Write Res: " + ioUringCqe.getRes());
-                        System.out.println("Eventloop Fd: " + event.getAbstractIOUringChannel().getSocket().getFd());
+                        System.out.println("EventLoop Write Res: " + ioUringCqe.getRes());
+                        System.out.println("EventLoop Fd: " + event.getAbstractIOUringChannel().getSocket().getFd());
+                        System.out.println("EventLoop Pipeline: " + event.getAbstractIOUringChannel().eventLoop());
                         //remove bytes
                         int localFlushAmount = ioUringCqe.getRes();
                         if (localFlushAmount > 0) {
