@@ -21,6 +21,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SingleThreadEventLoop;
 import io.netty.util.collection.LongObjectHashMap;
 
+import java.util.Set;
 import java.util.concurrent.Executor;
 
 import static io.netty.channel.unix.Errors.*;
@@ -141,11 +142,34 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
             if (hasTasks()) {
                 runAllTasks();
             }
+
+            // Always handle shutdown even if the loop processing threw an exception.
+            try {
+                if (isShuttingDown()) {
+                    closeAll();
+                    if (confirmShutdown()) {
+                        break;
+                    }
+                }
+            } catch (Throwable t) {
+                System.out.println("Exception error " + t);
+            }
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+        private void closeAll() {
+        // Using the intermediate collection to prevent ConcurrentModificationException.
+        // In the `close()` method, the channel is deleted from `channels` map.
+        final Set<Long> ids = events.keySet();
+
+        for (long id : ids) {
+            final AbstractIOUringChannel channel = events.get(id).getAbstractIOUringChannel();
+            events.get(id).getAbstractIOUringChannel().unsafe().close(channel.unsafe().voidPromise());
         }
     }
 
