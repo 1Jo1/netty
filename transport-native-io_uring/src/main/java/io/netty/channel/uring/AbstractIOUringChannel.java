@@ -146,9 +146,11 @@ abstract class AbstractIOUringChannel extends AbstractChannel implements UnixCha
 
     @Override
     protected void doClose() throws Exception {
+        System.out.println("DoClose Socket: " + socket.getFd());
         socket.close();
     }
 
+    //deregister
     // Channel/ChannelHandlerContext.read() was called
     @Override
     protected void doBeginRead() {

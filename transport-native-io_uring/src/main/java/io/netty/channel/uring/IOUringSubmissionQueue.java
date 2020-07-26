@@ -53,9 +53,8 @@ final class IOUringSubmissionQueue {
     private final long ringAddress;
     private final int ringFd;
 
-    private static int SOCK_NONBLOCK = 2048;
-    private static int SOCK_CLOEXEC = 524288;
-
+    private static final int SOCK_NONBLOCK = 2048;
+    private static final int SOCK_CLOEXEC = 524288;
 
     IOUringSubmissionQueue(long kHeadAddress, long kTailAddress, long kRingMaskAddress, long kRingEntriesAddress,
                                   long fFlagsAdress, long kDroppedAddress, long arrayAddress,
