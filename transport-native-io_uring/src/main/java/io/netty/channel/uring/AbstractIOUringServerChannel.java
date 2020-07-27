@@ -26,6 +26,7 @@ abstract class AbstractIOUringServerChannel extends AbstractIOUringChannel imple
 
     AbstractIOUringServerChannel(int fd) {
         super(null, new LinuxSocket(fd));
+        System.out.println("AbstractIOUringServerChannel constructor fd: " + fd);
     }
 
     AbstractIOUringServerChannel(LinuxSocket fd) {
