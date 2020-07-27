@@ -49,12 +49,14 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
     }
 
     public void add(AbstractIOUringChannel ch) {
+        System.out.println("Add Channel: " + ch.socket.intValue());
         int fd = ch.socket.intValue();
 
         channels.put(fd, ch);
     }
 
     public void remove(AbstractIOUringChannel ch) {
+        System.out.println("Remove Channel: " + ch.socket.intValue());
         int fd = ch.socket.intValue();
 
         AbstractIOUringChannel old = channels.remove(fd);
@@ -68,6 +70,7 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
     }
 
     private void closeAll() {
+        System.out.println("CloseAll IOUringEvenloop");
         // Using the intermediate collection to prevent ConcurrentModificationException.
         // In the `close()` method, the channel is deleted from `channels` map.
         AbstractIOUringChannel[] localChannels = channels.values().toArray(new AbstractIOUringChannel[0]);
@@ -83,7 +86,7 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
 
     @Override
     protected void run() {
-        for (; ; ) {
+        for (;;) {
             final IOUringCompletionQueue ioUringCompletionQueue = ringBuffer.getIoUringCompletionQueue();
             final IOUringCqe ioUringCqe = ioUringCompletionQueue.peek(); // or waiting
 
