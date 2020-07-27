@@ -19,6 +19,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SingleThreadEventLoop;
+import io.netty.util.collection.IntObjectHashMap;
+import io.netty.util.collection.IntObjectMap;
 import io.netty.util.collection.LongObjectHashMap;
 
 import java.util.Set;
@@ -31,6 +33,7 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
     // events should be unique to identify which event type that was
     private long eventIdCounter;
     private final LongObjectHashMap<Event> events = new LongObjectHashMap<Event>();
+    private final IntObjectMap<AbstractIOUringChannel> channels = new IntObjectHashMap<AbstractIOUringChannel>(4096);
     private RingBuffer ringBuffer;
 
     IOUringEventLoop(final EventLoopGroup parent, final Executor executor, final boolean addTaskWakesUp) {
@@ -45,13 +48,42 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
         return eventId;
     }
 
+    public void add(AbstractIOUringChannel ch) {
+        int fd = ch.socket.intValue();
+
+        channels.put(fd, ch);
+    }
+
+    public void remove(AbstractIOUringChannel ch) {
+        int fd = ch.socket.intValue();
+
+        AbstractIOUringChannel old = channels.remove(fd);
+        if (old != null && old != ch) {
+            // The Channel mapping was already replaced due FD reuse, put back the stored Channel.
+            channels.put(fd, old);
+
+            // If we found another Channel in the map that is mapped to the same FD the given Channel MUST be closed.
+            assert !ch.isOpen();
+        }
+    }
+
+    private void closeAll() {
+        // Using the intermediate collection to prevent ConcurrentModificationException.
+        // In the `close()` method, the channel is deleted from `channels` map.
+        AbstractIOUringChannel[] localChannels = channels.values().toArray(new AbstractIOUringChannel[0]);
+
+        for (AbstractIOUringChannel ch : localChannels) {
+            ch.unsafe().close(ch.unsafe().voidPromise());
+        }
+    }
+
     public void addNewEvent(Event event) {
         events.put(event.getId(), event);
     }
 
     @Override
     protected void run() {
-        for (;;) {
+        for (; ; ) {
             final IOUringCompletionQueue ioUringCompletionQueue = ringBuffer.getIoUringCompletionQueue();
             final IOUringCqe ioUringCqe = ioUringCompletionQueue.peek(); // or waiting
 
@@ -160,17 +192,6 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-        private void closeAll() {
-        // Using the intermediate collection to prevent ConcurrentModificationException.
-        // In the `close()` method, the channel is deleted from `channels` map.
-        final Set<Long> ids = events.keySet();
-
-        for (long id : ids) {
-            final AbstractIOUringChannel channel = events.get(id).getAbstractIOUringChannel();
-            events.get(id).getAbstractIOUringChannel().unsafe().close(channel.unsafe().voidPromise());
         }
     }
 
