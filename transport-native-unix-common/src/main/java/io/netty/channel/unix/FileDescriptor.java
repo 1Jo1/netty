@@ -66,6 +66,7 @@ public class FileDescriptor {
      * Close the file descriptor.
      */
     public void close() throws IOException {
+        System.out.println("file descriptor close: " + fd);
         for (;;) {
             int state = this.state;
             if (isClosed(state)) {
