@@ -619,6 +619,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
 
     @Override
     public Future<?> shutdownGracefully(long quietPeriod, long timeout, TimeUnit unit) {
+        System.out.println("SingleThreadEventExecutor.shutdownGracefully");
         ObjectUtil.checkPositiveOrZero(quietPeriod, "quietPeriod");
         if (timeout < quietPeriod) {
             throw new IllegalArgumentException(
@@ -682,6 +683,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
     @Override
     @Deprecated
     public void shutdown() {
+        System.out.println("SingleThreadEventExecutor.shutdown");
         if (isShutdown()) {
             return;
         }
@@ -736,7 +738,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
     public boolean isShutdown() {
         return state >= ST_SHUTDOWN;
     }
-
+ 
     @Override
     public boolean isTerminated() {
         return state == ST_TERMINATED;
