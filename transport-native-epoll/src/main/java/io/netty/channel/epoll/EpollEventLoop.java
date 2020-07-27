@@ -499,6 +499,7 @@ class EpollEventLoop extends SingleThreadEventLoop {
 
     @Override
     protected void cleanup() {
+        System.out.println("EpollEventloop CleanUp");
         try {
             // Ensure any in-flight wakeup writes have been performed prior to closing eventFd.
             while (pendingWakeup) {
