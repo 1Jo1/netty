@@ -38,7 +38,7 @@ public final class IOUringServerSocketChannel extends AbstractIOUringServerChann
 
     @Override
     Channel newChildChannel(int fd) throws Exception {
-        return new IOUringSocketChannel(this, new LinuxSocket(fd));
+        return new IOUringSocketChannel(this, new Socket(fd));
     }
 
     @Override

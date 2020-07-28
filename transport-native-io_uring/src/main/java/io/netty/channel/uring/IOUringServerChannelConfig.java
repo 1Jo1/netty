@@ -19,6 +19,7 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelException;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.DefaultChannelConfig;
 import io.netty.channel.MessageSizeEstimator;
 import io.netty.channel.RecvByteBufAllocator;
 import io.netty.channel.WriteBufferWaterMark;
@@ -31,7 +32,7 @@ import java.util.Map;
 import static io.netty.channel.ChannelOption.*;
 import static io.netty.util.internal.ObjectUtil.*;
 
-public class IOUringServerChannelConfig extends IOUringChannelConfig implements ServerSocketChannelConfig {
+public class IOUringServerChannelConfig extends DefaultChannelConfig implements ServerSocketChannelConfig {
     private volatile int backlog = NetUtil.SOMAXCONN;
 
     IOUringServerChannelConfig(AbstractIOUringServerChannel channel) {
