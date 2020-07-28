@@ -27,7 +27,7 @@ public final class IOUringServerSocketChannel extends AbstractIOUringServerChann
     private final IOUringServerSocketChannelConfig config;
 
     public IOUringServerSocketChannel() {
-        super(Socket.newSocketStream().getFd());
+        super(Socket.newSocketStream().intValue());
         this.config = new IOUringServerSocketChannelConfig(this);
     }
 
@@ -59,6 +59,7 @@ public final class IOUringServerSocketChannel extends AbstractIOUringServerChann
     @Override
     public void doBind(SocketAddress localAddress) throws Exception {
         super.doBind(localAddress);
+        //Todo set config option
         socket.listen(500);
         active = true;
     }

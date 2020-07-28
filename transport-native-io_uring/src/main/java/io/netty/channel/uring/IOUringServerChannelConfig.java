@@ -35,13 +35,14 @@ public class IOUringServerChannelConfig extends IOUringChannelConfig implements 
     private volatile int backlog = NetUtil.SOMAXCONN;
 
     IOUringServerChannelConfig(AbstractIOUringServerChannel channel) {
+
         super(channel);
     }
 
     @Override
     public boolean isReuseAddress() {
         try {
-            return ((IOUringSocketChannel) channel).socket.isReuseAddress();
+            return ((AbstractIOUringChannel) channel).socket.isReuseAddress();
         } catch (IOException e) {
             throw new ChannelException(e);
         }
@@ -50,7 +51,7 @@ public class IOUringServerChannelConfig extends IOUringChannelConfig implements 
     @Override
     public IOUringServerChannelConfig setReuseAddress(boolean reuseAddress) {
         try {
-            ((IOUringSocketChannel) channel).socket.setReuseAddress(reuseAddress);
+            ((AbstractIOUringChannel) channel).socket.setReuseAddress(reuseAddress);
             return this;
         } catch (IOException e) {
             throw new ChannelException(e);
@@ -60,7 +61,7 @@ public class IOUringServerChannelConfig extends IOUringChannelConfig implements 
     @Override
     public int getReceiveBufferSize() {
         try {
-            return ((IOUringSocketChannel) channel).socket.getReceiveBufferSize();
+            return ((AbstractIOUringChannel) channel).socket.getReceiveBufferSize();
         } catch (IOException e) {
             throw new ChannelException(e);
         }
@@ -69,7 +70,7 @@ public class IOUringServerChannelConfig extends IOUringChannelConfig implements 
     @Override
     public IOUringServerChannelConfig setReceiveBufferSize(int receiveBufferSize) {
         try {
-            ((IOUringSocketChannel) channel).socket.setReceiveBufferSize(receiveBufferSize);
+            ((AbstractIOUringChannel) channel).socket.setReceiveBufferSize(receiveBufferSize);
             return this;
         } catch (IOException e) {
             throw new ChannelException(e);
