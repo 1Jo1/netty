@@ -134,7 +134,7 @@ final class IOUringSubmissionQueue {
 
     private int flushSqe() {
         long kTail = toUnsignedLong(PlatformDependent.getInt(kTailAddress));
-        long kHead = toUnsignedLong(PlatformDependent.getIntVolatalile(kHeadAddress));
+        long kHead = toUnsignedLong(PlatformDependent.getIntVolatile(kHeadAddress));
         long kRingMask = toUnsignedLong(PlatformDependent.getInt(kRingMaskAddress));
 
         System.out.println("Ktail: " + kTail);

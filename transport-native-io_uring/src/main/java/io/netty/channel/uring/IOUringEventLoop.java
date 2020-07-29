@@ -126,7 +126,7 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
                         event.setId(eventId);
                         ringBuffer.getIoUringSubmissionQueue()
                                   .add(eventId, EventType.ACCEPT, event.getAbstractIOUringChannel()
-                                                                       .getSocket().intValue(),
+                                       .getSocket().intValue(),
                                        0,
                                        0,
                                        0);
@@ -188,7 +188,6 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
                 runAllTasks();
             }
 
-            // Always handle shutdown even if the loop processing threw an exception.
             try {
                 if (isShuttingDown()) {
                     closeAll();

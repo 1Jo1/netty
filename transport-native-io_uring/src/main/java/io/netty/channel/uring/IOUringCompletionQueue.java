@@ -56,7 +56,7 @@ final class IOUringCompletionQueue {
   }
 
   public IOUringCqe peek() {
-    long head = toUnsignedLong(PlatformDependent.getIntVolatalile(kHeadAddress));
+    long head = toUnsignedLong(PlatformDependent.getIntVolatile(kHeadAddress));
 
     if (head != toUnsignedLong(PlatformDependent.getInt(kTailAddress))) {
         long index = head & toUnsignedLong(PlatformDependent.getInt(kringMaskAddress));
