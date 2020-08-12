@@ -36,5 +36,17 @@ probably, we won't support 32 Bit so I have to make sure that you can't execute 
 Another way would be to find security vulnerability is to use different attack vectors or use a tool for that
 
 
+
+
+SubmissionQueue is full - Backpressure Issue:
+
+it could cause to a unauthorized data modification of other clients if io_uring execution is too slow, other client could access to unauthorized data,
+solution would be to keep track of all events in SQE, these events will be delete in the CQE processing
+
+Hashmap Events Overflow issue(to keep the track of all events in the SQE)
+unauthorized data modification and client could access to unauthorized data because of the eventIdCounter overflow
+
+
+
 ### Contributions
 the project is completely done by me alone but I get a feedback from netty community
