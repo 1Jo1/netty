@@ -40,7 +40,7 @@ Another way would be to find security vulnerability is to use different attack v
 
 SubmissionQueue is full - Backpressure Issue:
 
-it could cause to a unauthorized data modification of other clients if io_uring execution is too slow, other client could access to unauthorized data,
+it could cause to an unauthorized data modification of other clients if io_uring execution is too slow, other client could access to unauthorized data,
 solution would be to keep track of all events in SQE, these events will be delete in the CQE processing
 
 Hashmap Events Overflow issue(to keep the track of all events in the SQE)
