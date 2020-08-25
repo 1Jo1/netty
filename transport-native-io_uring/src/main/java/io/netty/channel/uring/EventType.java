@@ -23,7 +23,8 @@ enum EventType {
     POLL_EVENTFD(6),
     POLL_LINK(6),
     POLL_RDHUP(6),
-    POLL_OUT(6);
+    POLL_OUT(6),
+    POLL_REMOVE(7);
 
     private final int op;
 

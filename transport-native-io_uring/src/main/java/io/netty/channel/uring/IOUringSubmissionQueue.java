@@ -185,6 +185,16 @@ final class IOUringSubmissionQueue {
         return true;
     }
 
+    public boolean addPollRemove(long eventId) {
+        long sqe = getSqe();
+        if (sqe == 0) {
+            return false;
+        }
+        setData(sqe, eventId, EventType.POLL_REMOVE, -1, 0, 0, 0);
+
+        return true;
+    }
+
     //Todo ring buffer errors for example if submission queue is full
     public boolean add(long eventId, EventType type, int fd, long bufferAddress, int pos, int limit) {
         long sqe = getSqe();

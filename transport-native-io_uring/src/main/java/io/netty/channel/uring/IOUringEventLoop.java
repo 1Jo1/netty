@@ -61,6 +61,8 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
     private final FileDescriptor eventfd;
 
     private long prevDeadlineNanos = NONE;
+
+    private boolean pollRemove;
     private boolean pendingWakeup;
     //private final FileDescriptor eventFd;
 
@@ -126,7 +128,7 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
     protected void run() {
         final IOUringCompletionQueue completionQueue = ringBuffer.getIoUringCompletionQueue();
         final IOUringSubmissionQueue submissionQueue = ringBuffer.getIoUringSubmissionQueue();
-        for (;;) {
+        for (; ; ) {
             logger.info("Run IOUringEventLoop {}", this.toString());
             long curDeadlineNanos = nextScheduledTaskDeadlineNanos();
             if (curDeadlineNanos == -1L) {
@@ -288,7 +290,6 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
             if (res == ETIME) {
                 prevDeadlineNanos = NONE;
             }
-
             break;
         case POLL_EVENTFD:
             pendingWakeup = false;
@@ -304,11 +305,32 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
             break;
         case POLL_RDHUP:
             if (!event.getAbstractIOUringChannel().isActive()) {
-               event.getAbstractIOUringChannel().shutdownInput(true);
+                event.getAbstractIOUringChannel().shutdownInput(true);
             }
             break;
         case POLL_OUT:
             logger.info("POLL_OUT Res: {}", res);
+            break;
+        case POLL_REMOVE:
+            logger.info("POLL REMOVE: {}", res);
+            for (AbstractIOUringChannel ch : channels.values()) {
+
+                if (!ch.isActive()) {
+                    if (ch.isRegistered()) {
+                        try {
+                            ch.doDeregister();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                try {
+                    ch.socket.close();
+                    logger.info("POLL_REMOVE: Fd: {}", ch.socket.intValue());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
             break;
         }
         this.events.remove(event.getId());
@@ -358,7 +380,7 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
         }
     }
 
-   //to be notified when the filedesciptor is closed
+    //to be notified when the filedesciptor is closed
     private void pollRdHup(AbstractIOUringChannel channel) {
         //all childChannels should poll POLLRDHUP
         long eventId = incrementEventIdCounter();

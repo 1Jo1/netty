@@ -213,29 +213,16 @@ abstract class AbstractIOUringChannel extends AbstractChannel implements UnixCha
                 connectTimeoutFuture = null;
             }
 
-            if (isRegistered()) {
-                // Need to check if we are on the EventLoop as doClose() may be triggered by the GlobalEventExecutor
-                // if SO_LINGER is used.
-                //
-                // See https://github.com/netty/netty/issues/7159
-                EventLoop loop = eventLoop();
-                if (loop.inEventLoop()) {
-                    doDeregister();
-                } else {
-                    loop.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                doDeregister();
-                            } catch (Throwable cause) {
-                                pipeline().fireExceptionCaught(cause);
-                            }
-                        }
-                    });
-                }
-            }
         } finally {
-            socket.close();
+            //socket.close();
+            IOUringEventLoop ioUringEventLoop = (IOUringEventLoop) eventLoop();
+            final Event event = new Event();
+            long eventId = ioUringEventLoop.incrementEventIdCounter();
+            event.setId(eventId);
+            event.setOp(EventType.POLL_OUT);
+            ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue().addPollRemove(eventId);
+            ioUringEventLoop.addNewEvent(event);
+            ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue().submit();
         }
     }
 
