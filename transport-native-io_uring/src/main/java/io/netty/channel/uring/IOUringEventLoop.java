@@ -392,4 +392,12 @@ final class IOUringEventLoop extends SingleThreadEventLoop {
         ringBuffer.getIoUringSubmissionQueue().addPoll(eventId, channel.socket.intValue(), event.getOp());
         ringBuffer.getIoUringSubmissionQueue().submit();
     }
+
+    public boolean isPollRemove() {
+        return pollRemove;
+    }
+
+    public void setPollRemove(boolean pollRemove) {
+        this.pollRemove = pollRemove;
+    }
 }

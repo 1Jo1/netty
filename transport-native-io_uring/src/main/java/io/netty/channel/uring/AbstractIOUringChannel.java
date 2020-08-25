@@ -216,13 +216,16 @@ abstract class AbstractIOUringChannel extends AbstractChannel implements UnixCha
         } finally {
             //socket.close();
             IOUringEventLoop ioUringEventLoop = (IOUringEventLoop) eventLoop();
-            final Event event = new Event();
-            long eventId = ioUringEventLoop.incrementEventIdCounter();
-            event.setId(eventId);
-            event.setOp(EventType.POLL_OUT);
-            ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue().addPollRemove(eventId);
-            ioUringEventLoop.addNewEvent(event);
-            ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue().submit();
+            if (!ioUringEventLoop.isPollRemove()) {
+                final Event event = new Event();
+                long eventId = ioUringEventLoop.incrementEventIdCounter();
+                event.setId(eventId);
+                event.setOp(EventType.POLL_OUT);
+                ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue().addPollRemove(eventId);
+                ioUringEventLoop.addNewEvent(event);
+                ioUringEventLoop.getRingBuffer().getIoUringSubmissionQueue().submit();
+                ioUringEventLoop.setPollRemove(true);
+            }
         }
     }
 
