@@ -15,10 +15,15 @@
  */
 package io.netty.channel.uring;
 
+import io.netty.channel.unix.Buffer;
+import io.netty.channel.unix.Errors;
 import io.netty.channel.unix.FileDescriptor;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -272,5 +277,50 @@ public class NativeTest {
         } finally {
             ringBuffer.close();
         }
+    }
+
+    @Test
+    public void testRead() throws Exception {
+        RingBuffer ringBuffer = Native.createRingBuffer(32);
+        IOUringSubmissionQueue submissionQueue = ringBuffer.getIoUringSubmissionQueue();
+        IOUringCompletionQueue completionQueue = ringBuffer.getIoUringCompletionQueue();
+        assertNotNull(ringBuffer);
+        assertNotNull(submissionQueue);
+        assertNotNull(completionQueue);
+        LinuxSocket socket = LinuxSocket.newSocketStream();
+        socket.bind(new InetSocketAddress(0));    socket.listen(128);
+        java.net.Socket clientSocket = new java.net.Socket();
+        clientSocket.connect(socket.localAddress());
+        submissionQueue.addAccept(socket.intValue());
+        submissionQueue.submit();
+        assertTrue(completionQueue.ioUringWaitCqe());
+        final AtomicReference<LinuxSocket> socketRef = new AtomicReference<LinuxSocket>();
+        assertEquals(1, completionQueue.process(new IOUringCompletionQueue.IOUringCompletionQueueCallback() {
+            @Override
+            public boolean handle(int fd, int res, long flags, int op, int mask) {
+                LinuxSocket accepted = new LinuxSocket(res);
+                socketRef.set(accepted);
+                try {
+                    ByteBuffer buffer = ByteBuffer.allocateDirect(8);
+                    assertEquals(0, accepted.read(buffer, 0, buffer.capacity()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+        }));
+        ByteBuffer readBuffer = ByteBuffer.allocateDirect(8);
+        submissionQueue.addRead(socketRef.get().intValue(),
+                Buffer.memoryAddress(readBuffer), 0, readBuffer.capacity());
+        submissionQueue.submit();
+        assertTrue(completionQueue.ioUringWaitCqe());
+        assertEquals(1, completionQueue.process(new IOUringCompletionQueue.IOUringCompletionQueueCallback() {
+            @Override
+            public boolean handle(int fd, int res, long flags, int op, int mask) {
+                assertEquals(Errors.ERRNO_EWOULDBLOCK_NEGATIVE, res);
+                return true;
+            }
+        }));
+        ringBuffer.close();
     }
 }

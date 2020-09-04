@@ -313,7 +313,9 @@ abstract class AbstractIOUringChannel extends AbstractChannel implements UnixCha
 
              if (iovecArray.count() > 0) {
                  submissionQueue().addWritev(socket.intValue(), iovecMemoryAddress, iovecArray.count());
-                 submissionQueue().submit();
+                 if(!config().isAutoClose()) {
+                     submissionQueue().submit();
+                 }
                  ioState |= WRITE_SCHEDULED;
              }
          } else {
@@ -327,7 +329,9 @@ abstract class AbstractIOUringChannel extends AbstractChannel implements UnixCha
         IOUringSubmissionQueue submissionQueue = submissionQueue();
         submissionQueue.addWrite(socket.intValue(), buf.memoryAddress(), buf.readerIndex(),
                 buf.writerIndex());
-        submissionQueue.submit();
+        if(!config().isAutoClose()) {
+            submissionQueue.submit();
+        }
         ioState |= WRITE_SCHEDULED;
     }
 
@@ -450,7 +454,10 @@ abstract class AbstractIOUringChannel extends AbstractChannel implements UnixCha
             ioState |= POLL_IN_SCHEDULED;
             IOUringSubmissionQueue submissionQueue = submissionQueue();
             submissionQueue.addPollIn(socket.intValue());
-            submissionQueue.submit();
+
+            if(!config().isAutoRead()) {
+                submissionQueue.submit();
+            }
         }
 
         final void readComplete(int res) {

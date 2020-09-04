@@ -68,8 +68,8 @@ final class IOUringSubmissionQueue {
 
     private final ByteBuffer timeoutMemory;
     private final long timeoutMemoryAddress;
-
-    //private int sqeSubmitCounter;
+    private final int SUBMISSION_BATCH_SIZE = 20;
+    private int sqeSubmitCounter;
 
     IOUringSubmissionQueue(long kHeadAddress, long kTailAddress, long kRingMaskAddress, long kRingEntriesAddress,
                            long fFlagsAdress, long kDroppedAddress, long arrayAddress,
@@ -135,10 +135,7 @@ final class IOUringSubmissionQueue {
                 PlatformDependent.putInt(sqe + SQE_RW_FLAGS_FIELD, Native.SOCK_NONBLOCK | Native.SOCK_CLOEXEC);
             }
         }
-
         PlatformDependent.putByte(sqe + SQE_FLAGS_FIELD, (byte) 0);
-
-
 
         // pad field array -> all fields should be zero
         long offsetIndex = 0;
@@ -151,6 +148,12 @@ final class IOUringSubmissionQueue {
         logger.trace("BufferAddress: {}", PlatformDependent.getLong(sqe + SQE_ADDRESS_FIELD));
         logger.trace("Length: {}", PlatformDependent.getInt(sqe + SQE_LEN_FIELD));
         logger.trace("Offset: {}", PlatformDependent.getLong(sqe + SQE_OFFSET_FIELD));
+
+        sqeSubmitCounter++;
+        if (sqeSubmitCounter >= SUBMISSION_BATCH_SIZE) {
+            System.out.println("Batch");
+            submit();
+        }
     }
 
     public boolean addTimeout(long nanoSeconds) {
@@ -160,12 +163,14 @@ final class IOUringSubmissionQueue {
             sqe = getSqe();
 
             if (sqe == 0) {
+                System.out.println("AddTimeout submit");
                 submit();
                 submitted = true;
             }
         }
         setTimeout(nanoSeconds);
         setData(sqe, (byte) Native.IORING_OP_TIMEOUT, 0, -1, timeoutMemoryAddress, 1, 0);
+
         return submitted;
     }
 
@@ -188,6 +193,7 @@ final class IOUringSubmissionQueue {
             sqe = getSqe();
 
             if (sqe == 0) {
+                System.out.println("AddPoll submit");
                 submit();
                 submitted = true;
             }
@@ -205,6 +211,7 @@ final class IOUringSubmissionQueue {
             sqe = getSqe();
 
             if (sqe == 0) {
+                System.out.println("addRead submit");
                 submit();
                 submitted = true;
             }
@@ -220,6 +227,7 @@ final class IOUringSubmissionQueue {
             sqe = getSqe();
 
             if (sqe == 0) {
+                System.out.println("addWrite submit");
                 submit();
                 submitted = true;
             }
@@ -235,6 +243,7 @@ final class IOUringSubmissionQueue {
             sqe = getSqe();
 
             if (sqe == 0) {
+                System.out.println("addAccept submit");
                 submit();
                 submitted = true;
             }
@@ -251,6 +260,7 @@ final class IOUringSubmissionQueue {
             sqe = getSqe();
 
             if (sqe == 0) {
+                System.out.println("addPollRemove submit");
                 submit();
                 submitted = true;
             }
@@ -267,6 +277,7 @@ final class IOUringSubmissionQueue {
             sqe = getSqe();
 
             if (sqe == 0) {
+                System.out.println("addConnect submit");
                 submit();
                 submitted = true;
             }
@@ -283,6 +294,7 @@ final class IOUringSubmissionQueue {
             sqe = getSqe();
 
             if (sqe == 0) {
+                System.out.println("addWritev submit");
                 submit();
                 submitted = true;
             }
@@ -325,7 +337,8 @@ final class IOUringSubmissionQueue {
 
     public void submit() {
         int submitted = flushSqe();
-        logger.trace("Submitted: {}", submitted);
+        //System.out.println("Submitted: " + submitted);
+        sqeSubmitCounter = 0;
         if (submitted > 0) {
             int ret = Native.ioUringEnter(ringFd, submitted, 0, 0);
             if (ret < 0) {

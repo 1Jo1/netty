@@ -132,11 +132,16 @@ final class IOUringEventLoop extends SingleThreadEventLoop implements
                     if (curDeadlineNanos != prevDeadlineNanos) {
                         prevDeadlineNanos = curDeadlineNanos;
                         submissionQueue.addTimeout(deadlineToDelayNanos(curDeadlineNanos));
+                        System.out.println("Timeout");
                         submissionQueue.submit();
                     }
 
                     // Check there were any completion events to process
                     if (completionQueue.process(this) == -1) {
+
+//                        if (submissionQueue.count() > 0) {
+//                            submissionQueue.submit();
+//                        }
                         // Block if there is nothing to process after this try again to call process(....)
                         logger.trace("ioUringWaitCqe {}", this.toString());
                         completionQueue.ioUringWaitCqe();
@@ -149,11 +154,14 @@ final class IOUringEventLoop extends SingleThreadEventLoop implements
                     }
                 }
             }
-
             completionQueue.process(this);
 
             // Always call runAllTasks() as it will also fetch the scheduled tasks that are ready.
             runAllTasks();
+
+            if (submissionQueue.count() > 0) {
+                submissionQueue.submit();
+            }
 
             try {
                 if (isShuttingDown()) {
@@ -240,7 +248,7 @@ final class IOUringEventLoop extends SingleThreadEventLoop implements
 
         submissionQueue.addPollIn(eventfd.intValue());
         // Submit so its picked up
-        submissionQueue.submit();
+        //submissionQueue.submit();
     }
 
     private void handleConnect(int fd, int res) {

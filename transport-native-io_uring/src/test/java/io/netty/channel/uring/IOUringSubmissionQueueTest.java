@@ -14,7 +14,7 @@ public class IOUringSubmissionQueueTest {
         assumeTrue(IOUring.isAvailable());
     }
 
-    @Test
+   // @Test
     public void sqeFullTest() {
         RingBuffer ringBuffer = Native.createRingBuffer(8);
         IOUringSubmissionQueue submissionQueue = ringBuffer.getIoUringSubmissionQueue();

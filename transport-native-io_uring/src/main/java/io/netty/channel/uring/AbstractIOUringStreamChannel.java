@@ -198,7 +198,7 @@ abstract class AbstractIOUringStreamChannel extends AbstractIOUringChannel imple
             // Register for POLLRDHUP if this channel is already considered active.
             IOUringSubmissionQueue submissionQueue = submissionQueue();
             submissionQueue.addPollRdHup(fd().intValue());
-            submissionQueue.submit();
+            //submissionQueue.submit();
         }
     }
 
@@ -224,7 +224,6 @@ abstract class AbstractIOUringStreamChannel extends AbstractIOUringChannel imple
 
             submissionQueue.addRead(socket.intValue(), byteBuf.memoryAddress(),
                     byteBuf.writerIndex(), byteBuf.capacity());
-            submissionQueue.submit();
         }
 
         @Override
